@@ -112,13 +112,10 @@ class FileScan(object):
     
     
 if __name__ == '__main__':
+
+    import config
     
-    db = core.db.Database({
-        "database": "",
-        "user": "",
-        "password": "",
-        "host": ""
-    })
+    db = core.db.Database(config.db)
     
     scan = FileScan(db)
     scan.verbose = True
