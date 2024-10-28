@@ -3,42 +3,40 @@ from datetime import datetime
 import core.db
 
 
-db_config = {
-    "database": "",
-    "user": "",
-    "password": "",
-    "host": ""
-}
-
-
-class FileHunter(object):
+class FileScan(object):
     
-    def __init__(self):
+    def __init__(self, db):
         self.verbose = False
         self.root = None
-        self.db = core.db.Database(db_config)
+        self.db = db
 
+
+    def log(self, message):
+        if self.verbose:
+            print(message)
+        
 
     def get_file_info(self, file_path):
         size = os.path.getsize(file_path)
-        if self.verbose and size > (1024**3):
-            print(f'Large file (>1Gb): {file_path.split("/")[-1:]}')
-            
+        if size > (1024**3):
+            self.log(f'Large file (>1Gb): {file_path.split("/")[-1:]}')
         mtime = datetime.fromtimestamp(os.path.getctime(file_path))
         ctime = datetime.fromtimestamp(os.path.os.stat(file_path).st_birthtime)
         dummy, ext = os.path.splitext(file_path)
-        with open(file_path, 'rb', buffering=0) as f:
-            digest = hashlib.file_digest(f, 'md5').hexdigest()
-
         return {
-            'hash': digest,
             'size': size,
             'created': ctime,
             'modified': mtime,
             'ext': ext[1:]
         }
 
-        
+
+    def get_file_hash(self, file_path):
+        with open(file_path, 'rb', buffering=0) as f:
+            digest = hashlib.file_digest(f, 'md5').hexdigest()
+        return digest
+
+    
     def add_folder(self, path):
         if path.endswith('/'): path = path[:-1]
         parent_id = None
@@ -50,8 +48,7 @@ class FileHunter(object):
             if folder:
                 parent_id = folder['id']
             else:
-                if self.verbose:
-                    print(f'New folder: {folder_path}')
+                self.log(f'New folder: {folder_path}')
                 
                 parent_id = self.db.add_record('folders', {
                     'parent': parent_id,
@@ -81,11 +78,10 @@ class FileHunter(object):
             {'field': 'name', 'value': file_info['name']}
         ]):
             # we could check to update the file here?
-            if self.verbose:
-                print(f'Skipping: {"/".join(path)}')
+            self.log(f'Skipping: {"/".join(path)}')
         else:
-            if self.verbose:
-                print(f'New file: {"/".join(path)}')
+            self.log(f'New file: {"/".join(path)}')
+            file_info['hash'] = self.get_file_hash(full_path)
             self.db.add_record('items', file_info)
 
             
@@ -101,8 +97,8 @@ class FileHunter(object):
                 elif os.path.isfile(current):
                     self.add_file(item_path)
         except PermissionError:
-            return
-                
+            self.log(f'Permission error: {full_path}')
+
         
     def add_root(self, name, root):
         self.root = root
@@ -117,9 +113,16 @@ class FileHunter(object):
     
 if __name__ == '__main__':
     
-    fh = FileHunter()
-    fh.verbose = True
-    fh.add_root(
+    db = core.db.Database({
+        "database": "",
+        "user": "",
+        "password": "",
+        "host": ""
+    })
+    
+    scan = FileScan(db)
+    scan.verbose = True
+    scan.add_root(
         'Toshiba 3Tb 3',
         '/Users/Shared/Mount/kuro/Volumes/Toshiba 3Tb 3/'
     )
