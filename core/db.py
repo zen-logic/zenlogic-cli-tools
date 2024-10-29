@@ -1,4 +1,3 @@
-import os, sys
 import mysql.connector
 
 class Database(object):
@@ -178,4 +177,3 @@ class Database(object):
             self.update_record(table_name, match, data)
         else:
             self.add_record(table_name, data)
-
