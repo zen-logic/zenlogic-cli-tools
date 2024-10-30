@@ -2,6 +2,15 @@ import os, sys, hashlib
 from datetime import datetime
 
 
+def bytes_to_readable(num, suffix="B"):
+    for unit in ("", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"):
+        if abs(num) < 1024.0:
+            return f"{num:3.1f}{unit}{suffix}"
+        num /= 1024.0
+    return f"{num:.1f}Yi{suffix}"
+
+
+
 class FileScan(object):
     
     def __init__(self, db):
@@ -18,7 +27,7 @@ class FileScan(object):
     def get_file_info(self, file_path):
         size = os.path.getsize(file_path)
         if size > (1024**3):
-            self.log(f'Large file (>1Gb): {file_path.split("/")[-1:]}')
+            self.log(f'Large file ({bytes_to_readable(size)}): {file_path.split("/")[-1:][0]}')
         mtime = datetime.fromtimestamp(os.path.getctime(file_path))
         ctime = datetime.fromtimestamp(os.path.os.stat(file_path).st_birthtime)
         dummy, ext = os.path.splitext(file_path)
@@ -31,10 +40,14 @@ class FileScan(object):
 
 
     def get_file_hash(self, file_path):
-        with open(file_path, 'rb', buffering=0) as f:
-            digest = hashlib.file_digest(f, 'md5').hexdigest()
+        try:
+            with open(file_path, 'rb', buffering=0) as f:
+                digest = hashlib.file_digest(f, 'md5').hexdigest()
+        except OSError as e:
+            digest = None
+            
         return digest
-
+            
     
     def add_folder(self, path):
         if path.endswith('/'): path = path[:-1]
