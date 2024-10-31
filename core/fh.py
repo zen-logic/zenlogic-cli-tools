@@ -46,6 +46,8 @@ class CLI(object):
                 else:
                     out.append(f'missing field: {field}')
             print(' | '.join(out))
+        else:
+            print('unrecognised format')
 
             
     def match(self, *args, **kwargs):
