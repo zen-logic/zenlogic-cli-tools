@@ -1,14 +1,6 @@
 import os, sys, hashlib
 from datetime import datetime
-
-
-def bytes_to_readable(num, suffix="B"):
-    for unit in ("", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"):
-        if abs(num) < 1024.0:
-            return f"{num:3.1f}{unit}{suffix}"
-        num /= 1024.0
-    return f"{num:.1f}Yi{suffix}"
-
+from core.util import *
 
 
 class FileScan(object):
@@ -39,16 +31,6 @@ class FileScan(object):
         }
 
 
-    def get_file_hash(self, file_path):
-        try:
-            with open(file_path, 'rb', buffering=0) as f:
-                digest = hashlib.file_digest(f, 'md5').hexdigest()
-        except OSError as e:
-            digest = None
-            
-        return digest
-            
-    
     def add_folder(self, path):
         if path.endswith('/'): path = path[:-1]
         parent_id = None
@@ -93,7 +75,7 @@ class FileScan(object):
             self.log(f'Skipping: {"/".join(path)}')
         else:
             self.log(f'New file: {"/".join(path)}')
-            file_info['hash'] = self.get_file_hash(full_path)
+            file_info['hash'] = get_file_hash(full_path)
             self.db.add_record('items', file_info)
 
             

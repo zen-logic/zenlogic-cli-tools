@@ -20,7 +20,9 @@ if __name__ == '__main__':
 
     scanner = FileScan(db)
     scanner.verbose = True
-    scanner.add_root(
-        'Toshiba 3Tb 3',
-        '/Users/Shared/Mount/kuro/Volumes/Toshiba 3Tb 3/'
-    )
+    # scanner.add_root(
+    #     'Crucial 2TB',
+    #     '/Volumes/Crucial 2TB/'
+    # )
+    print('nothing defined')
+    

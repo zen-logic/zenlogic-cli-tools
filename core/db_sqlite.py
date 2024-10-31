@@ -84,17 +84,24 @@ class Database(object):
         if type(match) == list:
             items = []
             for item in match:
-                items.append(f"`{item['field']}` = ?")
+                if item['value'] != None:
+                    items.append(f"`{item['field']}` = ?")
+                else:
+                    items.append(f"`{item['field']}` IS NULL")
             return ' AND '.join(items)
         else:
-            return f"`{match['field']}` = ?"
+            if match['field'] != None:
+                return f"`{match['field']}` = ?"
+            else:
+                return None
             
 
     def get_match_values(self, match):
         if type(match) == list:
             items = []
             for item in match:
-                items.append(item['value'])
+                if item['value'] != None:
+                    items.append(item['value'])
             return tuple(items)
         else:
             return tuple([match['value']])

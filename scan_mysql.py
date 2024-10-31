@@ -7,9 +7,10 @@ if __name__ == '__main__':
     db = core.db.Database(config.db)
     scanner = FileScan(db)
     scanner.verbose = True
-    scanner.add_root(
-        'Toshiba 3Tb 3',
-        '/Users/Shared/Mount/kuro/Volumes/Toshiba 3Tb 3/'
-    )
+    # scanner.add_root(
+    #     'Toshiba 3Tb 3',
+    #     '/Users/Shared/Mount/kuro/Volumes/Toshiba 3Tb 3/'
+    # )
+    print('nothing defined')
 
     
