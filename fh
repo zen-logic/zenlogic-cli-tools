@@ -1,2 +1,2 @@
 #!/bin/sh
-"exec" "`dirname $0`/.env/bin/python" "$0.py" "$@"
+"exec" "`dirname $0`/.env/bin/python" "`dirname $0`/core/`basename $0`.py" "$@"

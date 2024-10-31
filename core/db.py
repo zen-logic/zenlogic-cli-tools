@@ -1,1 +1,1 @@
-from core.db_mysql import Database
+from db_mysql import Database
