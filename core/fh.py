@@ -97,17 +97,10 @@ class CLI(object):
             print('specify "folder" or "file"')
 
     
-    def roots(self, *args, **kwargs):
-        print('Available storage roots:')
-        for root in self.query.get_roots():
-            print(str(root['id']).rjust(5), root['name'].ljust(20), root['path'])
-
-
     def hierarchy(self, *args, **kwargs):
         if 'id' in kwargs:
             for folder in self.query.folder_hierarchy(kwargs['id']):
-                # print(json.dumps(folder))
-                print(folder['id'], folder['path'])
+                self.output(folder)
         else:
             print('specify folder id')
 
@@ -125,9 +118,15 @@ class CLI(object):
 
 
     def list(self, *args, **kwargs):
+        
         if len(args) > 0:
-            for item in self.query.list(args[0]):
-                self.output(item)
+            if args[0] == 'roots':
+                print('Available storage roots:')
+                for root in self.query.get_roots():
+                    print(str(root['id']).rjust(5), root['name'].ljust(20), root['path'])
+            else:
+                for item in self.query.list(args[0]):
+                    self.output(item)
         else:
             print('specify folder id for file list')
             
