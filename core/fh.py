@@ -58,13 +58,25 @@ if __name__ == '__main__':
         help='folder id to show')
      
     p = sub.add_parser(
-        'diff',
+        'compare',
         help='find differences items in folder structure')
     p.add_argument('a', help='first folder id')
     p.add_argument('b', help='second folder id')
+    # p.add_argument(
+    #     '-a', '--all',
+    #     action='store_true',
+    #     help='return items in either a or b but not in both')
+
+    #     default    : in a, not in b
+    #     reversed   : in b, not in a
+    #     difference : in either a or b but not in both
+    #     both       : in both a and b
+    #     union      : all from a and b
+
     p.add_argument(
-        '-a', '--all',
-        action='store_true',
+        'operation',
+        default='difference',
+        choices=['a-not-b', 'b-not-a', 'difference', 'both', 'union'],
         help='return items in either a or b but not in both')
      
     p = sub.add_parser(
@@ -83,13 +95,6 @@ if __name__ == '__main__':
     p.add_argument(
         'path',
         help="path to the root of the folder or drive")
-
-    p = sub.add_parser(
-        'merge',
-        help='combine 2 folder structures')
-    p.add_argument('a', help='first folder id')
-    p.add_argument('b', help='second folder id')
-
 
     p = sub.add_parser(
         'get',

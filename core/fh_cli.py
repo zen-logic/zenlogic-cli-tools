@@ -48,9 +48,9 @@ class CLI(object):
         
 
     def output(self, data):
-        if self.fmt == 'json':
+        if self.fmt == 'json' and self.fields == None:
             print(json.dumps(data))
-        elif self.fmt == 'fields':
+        else:
             out = []
             if self.fields == None:
                 # show all fields
@@ -65,8 +65,6 @@ class CLI(object):
                 else:
                     out.append(f'missing field: {field}')
             print(' | '.join(out))
-        else:
-            print('unrecognised format')
 
 
     def scan(self):
@@ -106,15 +104,11 @@ class CLI(object):
             self.output(folder)
 
 
-    def diff(self):
-        for folder in self.query.folder_diff(self.args.a,
-                                             self.args.b,
-                                             all=self.args.all):
-            self.output(folder)
-
-
-    def merge(self):
-        for folder in self.query.folder_merge(self.args.a, self.args.b):
+    def compare(self):
+        for folder in self.query.folder_compare(
+                self.args.a,
+                self.args.b,
+                operation=self.args.operation):
             self.output(folder)
             
 
@@ -123,7 +117,7 @@ class CLI(object):
             for root in self.query.get_roots():
                 print(str(root['id']).rjust(5), root['name'].ljust(20), root['path'])
         else:
-            for item in self.query.list(self.args.item):
+            for item in self.query.get_list(self.args.item):
                 self.output(item)
 
 

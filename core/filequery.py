@@ -156,7 +156,7 @@ class FileQuery(object):
         if as_dict:
             items = {}
             for folder in folders:
-                items[folder['path']] = folder['id']
+                items[folder['path']] = folder
         else:
             items = []
             for folder in folders:
@@ -165,41 +165,67 @@ class FileQuery(object):
         return items
                 
 
-    def folder_diff(self, a, b, all=False):
+    def folder_compare(self, a, b, operation='difference'):
+        """Compare two folder hierarchies (a and b).
+        
+        operations:
+            a-not-b    : in a, not in b
+            b-not-a    : in b, not in a
+            difference : in either a or b but not in both
+            both       : in both a and b
+            union      : all from a and b
+        """
+        
         a = self.folder_hierarchy(a, as_dict=True)
         b = self.folder_hierarchy(b, as_dict=True)
 
-        if not all:
-            # paths in a, not in b
-            in_a = set(a.keys()) - set(b.keys())
-            return list(map(lambda item: a[item], in_a))
-        else:
-            # paths in either a or b but not in both
-            diff = set(a.keys()).symmetric_difference(set(b.keys()))
-            items = []
-            for item in diff:
-                if item in a:
-                    items.append(a[item])
-                else:
-                    items.append(b[item])
-            return items
-
-
-    def folder_merge(self, a, b):
-        a = self.folder_hierarchy(a, as_dict=True)
-        b = self.folder_hierarchy(b, as_dict=True)
-
-        merge = set(a.keys()).union(set(b.keys()))
         items = []
-        for item in merge:
-            if item in a:
-                items.append(a[item])
-            else:
-                items.append(b[item])
+        
+        if operation == 'a-not-b':
+            filtered = set(a.keys()) - set(b.keys())
+            items = list(map(lambda path: dict(a[path]), filtered))
+            
+        elif operation == 'b-not-a':
+            filtered = set(b.keys()) - set(a.keys())
+            items = list(map(lambda path: dict(b[path]), filtered))
+            
+        elif operation == 'difference':
+            diff = set(a.keys()).symmetric_difference(set(b.keys()))
+            for path in diff:
+                if path in a:
+                    items.append(dict(a[path]))
+                else:
+                    items.append(dict(b[path]))
+
+        elif operation == 'both':
+            intersection = set(a.keys()).intersection(set(b.keys()))
+            for path in intersection:
+                # path exists in both sets - take first item
+                # and add second as a match
+                item = dict(a[path])
+                item['match'] = [b[path]['id']] # add as list to allow further matches
+                items.append(item)
+            
+        elif operation == 'union':
+            union = set(a.keys()).union(set(b.keys()))
+            for path in union:
+                # path might exist in either set - if it does,
+                # add both references to returned item
+                if path in a:
+                    item = dict(a[path])
+                    if path in b:
+                        item['match'] = [b[path]['id']]
+                    items.append(item)
+                else:
+                    item = dict(b[path])
+                    if path in a:
+                        item['match'] = [a[path]['id']]
+                    items.append(item)
+
         return items
         
 
-    def list(self, folder_id):
+    def get_list(self, folder_id):
         items = []
         sql = """
         SELECT * FROM `items` WHERE `folder` = %s
