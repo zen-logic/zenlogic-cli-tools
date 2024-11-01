@@ -87,6 +87,9 @@ class CLI(object):
         elif t == 'folder':
             for item in self.query.find_folder_name(self.args.item, case_insensitive=True):
                 self.output(item)
+        elif t == 'ext':
+            for item in self.query.find_ext(self.args.item, case_insensitive=True):
+                self.output(item)
         elif t == 'hash':
             for item in self.query.find_hash(self.args.item):
                 self.output(item)
@@ -122,3 +125,14 @@ class CLI(object):
         else:
             for item in self.query.list(self.args.item):
                 self.output(item)
+
+
+    def get(self):
+        item = None
+        t = self.args.type
+        if t == 'file':
+            item = self.query.get_item(self.args.id)
+        elif t == 'folder':
+            item = self.query.get_folder(self.args.id)
+        if item:
+            self.output(item)

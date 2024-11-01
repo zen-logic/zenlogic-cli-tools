@@ -117,6 +117,25 @@ class FileQuery(object):
         return items
 
     
+    def find_ext(self, ext, case_insensitive=False):
+        items = []
+        sql = """
+        SELECT f1.*, f2.fullpath, r.name AS `rootname`, r.path AS `rootpath`
+        FROM `items` f1
+            JOIN `folders` f2 ON f1.folder = f2.id
+            JOIN `roots` r ON f1.root = r.id
+        WHERE f1.`ext` = %s
+        """
+        if case_insensitive:
+            sql += " COLLATE NOCASE"
+        
+        results = self.db.get_records(sql, (ext, ))
+        for item in results:
+            items.append(dict(item))
+        
+        return items
+    
+    
     def folder_hierarchy(self, folder_id, as_dict=False):
         sql = """
         WITH RECURSIVE FolderHierarchy AS (
@@ -189,4 +208,27 @@ class FileQuery(object):
         for item in results:
             items.append(dict(item))
         return items
+    
+
+    def get_folder(self, folder_id):
+        sql = """
+        SELECT * FROM `folders` WHERE `id` = %s
+        """
+        item = self.db.get_record(sql, (folder_id, ))
+        if item:
+            return dict(item)
+        else:
+            return None
+
+
+    def get_item(self, item_id):
+        sql = """
+        SELECT * FROM `items` WHERE `id` = %s
+        """
+        item = self.db.get_record(sql, (item_id, ))
+        if item:
+            return dict(item)
+        else:
+            return None
+        
     
