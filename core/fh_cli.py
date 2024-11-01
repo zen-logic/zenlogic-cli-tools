@@ -77,7 +77,6 @@ class CLI(object):
                     else:
                         out.append(f'missing field: {field}')
                 print(' | '.join(out))
-            
 
 
     def scan(self):

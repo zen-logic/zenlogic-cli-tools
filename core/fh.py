@@ -8,7 +8,7 @@ if __name__ == '__main__':
     
     parser.add_argument(
         '-o', '--output',
-        help='output format',
+        help='output format (default is JSON)',
         nargs='?', default='json',
         choices=['json', 'table'])
     
@@ -19,7 +19,7 @@ if __name__ == '__main__':
     
     parser.add_argument(
         '-d', '--database',
-        help='database file to use',
+        help='database file to use (default is $HOME/.zenlogic/fh.db)',
         nargs='?')
      
     sub = parser.add_subparsers(
@@ -55,7 +55,7 @@ if __name__ == '__main__':
      
     p = sub.add_parser(
         'hierarchy',
-        help='show folder hierarchy')
+        help='list folder hierarchy from folder id')
     p.add_argument(
         'id',
         help='folder id to show')
