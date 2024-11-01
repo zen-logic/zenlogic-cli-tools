@@ -166,6 +166,20 @@ class FileQuery(object):
             return items
 
 
+    def folder_merge(self, a, b):
+        a = self.folder_hierarchy(a, as_dict=True)
+        b = self.folder_hierarchy(b, as_dict=True)
+
+        merge = set(a.keys()).union(set(b.keys()))
+        items = []
+        for item in merge:
+            if item in a:
+                items.append(a[item])
+            else:
+                items.append(b[item])
+        return items
+        
+
     def list(self, folder_id):
         items = []
         sql = """

@@ -110,6 +110,11 @@ class CLI(object):
             self.output(folder)
 
 
+    def merge(self):
+        for folder in self.query.folder_merge(self.args.a, self.args.b):
+            self.output(folder)
+            
+
     def list(self):
         if self.args.item == 'roots':
             for root in self.query.get_roots():

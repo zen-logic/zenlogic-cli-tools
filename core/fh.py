@@ -84,6 +84,12 @@ if __name__ == '__main__':
         'path',
         help="path to the root of the folder or drive")
 
+    p7 = sub.add_parser(
+        'merge',
+        help='combine 2 folder structures')
+    p7.add_argument('a', help='first folder id')
+    p7.add_argument('b', help='second folder id')
+    
     
     args = parser.parse_args()
     
