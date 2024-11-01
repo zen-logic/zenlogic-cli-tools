@@ -11,6 +11,13 @@ def home_dir():
 def script_dir():
     return pathlib.Path(__file__).parent.resolve()
 
+def data_dir():
+    path = home_dir()
+    path = os.path.join(path, '.zenlogic')
+    if not os.path.exists(path):
+        os.mkdir(path)
+    return path
+
 
 class CLI(object):
     
@@ -21,12 +28,12 @@ class CLI(object):
         if self.args.database:
             db_file = self.args.database
         else:
-            db_file = os.path.join(script_dir(), 'test.db')
+            db_file = os.path.join(data_dir(), 'fh.db')
         self.db = Database(db_file)
+
         self.query = FileQuery(self.db)
-        self.scan = FileScan(self.db)
+        self.scanner = FileScan(self.db)
         self.ops = FileOps(self.db)
-        self.scan.verbose = True
         if not os.path.exists(db_file):
             blank = os.path.join(script_dir(), 'blank.sql')
             self.db.run_sql_file(blank)
@@ -61,7 +68,12 @@ class CLI(object):
         else:
             print('unrecognised format')
 
-            
+
+    def scan(self):
+        self.scanner.verbose = True
+        self.scanner.add_root(self.args.name, self.args.path)
+
+        
     def match(self):
         for item in self.query.match_file(self.args.filename):
             self.output(item)

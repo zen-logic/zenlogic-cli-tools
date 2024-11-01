@@ -73,7 +73,18 @@ if __name__ == '__main__':
     p5.add_argument(
         'item',
         help="folder id or 'roots'")
-     
+
+    p6 = sub.add_parser(
+        'scan',
+        help='scan folder/drive and create a storage root')
+    p6.add_argument(
+        'name',
+        help="name for the new storage root")
+    p6.add_argument(
+        'path',
+        help="path to the root of the folder or drive")
+
+    
     args = parser.parse_args()
     
     if args.command:
