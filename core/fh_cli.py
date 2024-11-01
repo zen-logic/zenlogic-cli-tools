@@ -48,23 +48,36 @@ class CLI(object):
         
 
     def output(self, data):
-        if self.fmt == 'json' and self.fields == None:
-            print(json.dumps(data))
-        else:
-            out = []
-            if self.fields == None:
-                # show all fields
+        out = []
+        if self.fields == None:
+            # output all fields in whatever format is selected
+            if self.fmt == 'json':
+                print(json.dumps(data))
+            elif self.fmt == 'table':
                 fields = data.keys()
-            else:
-                # only selected fields
-                fields = self.fields.split(',')
-                
-            for field in fields:
-                if field in data:
-                    out.append(str(data[field]))
-                else:
-                    out.append(f'missing field: {field}')
-            print(' | '.join(out))
+                for field in fields:
+                    if field in data:
+                        out.append(str(data[field]))
+                    else:
+                        out.append(f'missing field: {field}')
+                print(' | '.join(out))
+        else:
+            # output selected fields in whatever format is selected
+            fields = self.fields.split(',')
+            if self.fmt == 'json':
+                out = {}
+                for field in fields:
+                    if field in data:
+                        out[field] = data[field]
+                print(json.dumps(out))
+            elif self.fmt == 'table':
+                for field in fields:
+                    if field in data:
+                        out.append(str(data[field]))
+                    else:
+                        out.append(f'missing field: {field}')
+                print(' | '.join(out))
+            
 
 
     def scan(self):
@@ -108,7 +121,13 @@ class CLI(object):
         for folder in self.query.folder_compare(
                 self.args.a,
                 self.args.b,
-                operation=self.args.operation):
+                self.args.operation
+        ):
+            self.output(folder)
+
+
+    def merge(self):
+        for folder in self.query.folder_merge(self.args.a, self.args.b):
             self.output(folder)
             
 

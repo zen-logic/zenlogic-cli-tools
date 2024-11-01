@@ -1,19 +1,22 @@
+import argparse
 from fh_cli import CLI
 
 if __name__ == '__main__':
-    import argparse
     
     # create the top-level parser
     parser = argparse.ArgumentParser(prog='fh')
+    
     parser.add_argument(
         '-o', '--output',
         help='output format',
         nargs='?', default='json',
-        choices=['json', 'fields'])
+        choices=['json', 'table'])
+    
     parser.add_argument(
         '-f', '--fields',
-        help='comma separated list of fields to output',
+        help='comma separated list of fields to output (default is all fields)',
         nargs='?')
+    
     parser.add_argument(
         '-d', '--database',
         help='database file to use',
