@@ -60,7 +60,7 @@ class CLI(object):
                         out.append(str(data[field]))
                     else:
                         out.append(f'missing field: {field}')
-                print(' | '.join(out))
+                print('\t'.join(out))
         else:
             # output selected fields in whatever format is selected
             fields = self.fields.split(',')
@@ -76,7 +76,7 @@ class CLI(object):
                         out.append(str(data[field]))
                     else:
                         out.append(f'missing field: {field}')
-                print(' | '.join(out))
+                print('\t'.join(out))
 
 
     def scan(self):
@@ -131,14 +131,15 @@ class CLI(object):
             
 
     def list(self):
-        if self.args.item == 'roots':
-            for root in self.query.get_roots():
-                print(str(root['id']).rjust(5), root['name'].ljust(20), root['path'])
-        else:
-            for item in self.query.get_list(self.args.item):
-                self.output(item)
+        for item in self.query.get_list(self.args.item):
+            self.output(item)
 
+                
+    def roots(self):
+        for root in self.query.get_roots():
+            print(str(root['id']).rjust(5), root['name'].ljust(20), root['path'])
 
+            
     def get(self):
         item = None
         t = self.args.type

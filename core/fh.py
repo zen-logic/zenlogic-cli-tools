@@ -1,15 +1,21 @@
-import argparse
+import os, argparse
 from fh_cli import CLI
 
 if __name__ == '__main__':
-    
     # create the top-level parser
-    parser = argparse.ArgumentParser(prog='fh')
+    parser = argparse.ArgumentParser(
+        prog='fh',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=f'''
+Zen Logic file hunter
+Track, manage and consolidate files across multiple locations, external storage (such as USB drives) or network mounts.
+        '''
+    )
     
     parser.add_argument(
         '-o', '--output',
-        help='output format (default is JSON)',
-        nargs='?', default='json',
+        help='output format (default is table)',
+        nargs='?', default='table',
         choices=['json', 'table'])
     
     parser.add_argument(
@@ -27,86 +33,80 @@ if __name__ == '__main__':
         dest='command')
      
     # create the command parsers
-    p = sub.add_parser(
+    cmd = sub.add_parser(
         'match',
         help='match file by hash')
-    p.add_argument(
+    cmd.add_argument(
         'filename',
         help='file to match')
      
-    p = sub.add_parser(
+    cmd = sub.add_parser(
         'find',
         help='find item (file, folder, path, hash, ext)')
-    p.add_argument(
+    cmd.add_argument(
         'type',
         help='item type to find',
         choices=['file', 'folder', 'path', 'hash', 'ext'])
-    p.add_argument(
+    cmd.add_argument(
         'item',
         help='item to find')
-    p.add_argument(
+    cmd.add_argument(
         '-e', '--end',
         action='store_true',
         help='match to end of path')
-    p.add_argument(
+    cmd.add_argument(
         '-s', '--start',
         action='store_true',
         help='match to start of path')
      
-    p = sub.add_parser(
+    cmd = sub.add_parser(
         'hierarchy',
         help='list folder hierarchy from folder id')
-    p.add_argument(
+    cmd.add_argument(
         'id',
         help='folder id to show')
      
-    p = sub.add_parser(
+    cmd = sub.add_parser(
         'compare',
         help='find differences items in folder structure')
-    p.add_argument('a', help='first folder id')
-    p.add_argument('b', help='second folder id')
-    # p.add_argument(
-    #     '-a', '--all',
-    #     action='store_true',
-    #     help='return items in either a or b but not in both')
+    cmd.add_argument('a', help='first folder id')
+    cmd.add_argument('b', help='second folder id')
 
-    #     default    : in a, not in b
-    #     reversed   : in b, not in a
-    #     difference : in either a or b but not in both
-    #     both       : in both a and b
-    #     union      : all from a and b
-
-    p.add_argument(
+    cmd.add_argument(
         'operation',
         default='difference',
         choices=['a-not-b', 'b-not-a', 'difference', 'both', 'union'],
         help='return items in either a or b but not in both')
      
-    p = sub.add_parser(
+    cmd = sub.add_parser(
         'list',
-        help='list files in folder or storage roots')
-    p.add_argument(
+        help='list items in folder id')
+    cmd.add_argument(
         'item',
-        help="folder id or 'roots'")
+        help="folder id")
 
-    p = sub.add_parser(
+    cmd = sub.add_parser(
+        'roots',
+        help='list storage roots')
+
+    cmd = sub.add_parser(
         'scan',
         help='scan folder/drive and create a storage root')
-    p.add_argument(
+    cmd.add_argument(
         'name',
         help="name for the new storage root")
-    p.add_argument(
+    cmd.add_argument(
         'path',
         help="path to the root of the folder or drive")
 
-    p = sub.add_parser(
+    cmd = sub.add_parser(
         'get',
         help='get item by id (file, folder)')
-    p.add_argument(
+    cmd.add_argument(
         'type',
         help='item type to get',
         choices=['file', 'folder'])
-    p.add_argument(
+    cmd.add_argument(
         'id',
         help='item id')
 
