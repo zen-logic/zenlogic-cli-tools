@@ -17,8 +17,11 @@ class CLI(object):
     def __init__(self, args):
         self.args = args
         self.setup()
-        db_file = 'test.db'
-        db_file = os.path.join(script_dir(), db_file)
+
+        if self.args.database:
+            db_file = self.args.database
+        else:
+            db_file = os.path.join(script_dir(), 'test.db')
         self.db = Database(db_file)
         self.query = FileQuery(self.db)
         self.scan = FileScan(self.db)

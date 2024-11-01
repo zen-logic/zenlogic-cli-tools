@@ -1,4 +1,4 @@
-from cli import CLI
+from fh_cli import CLI
 
 if __name__ == '__main__':
     import argparse
@@ -11,6 +11,9 @@ if __name__ == '__main__':
                         choices=['json', 'fields'])
     parser.add_argument('-f', '--fields',
                         help='comma separated list of fields to output',
+                        nargs='?')
+    parser.add_argument('-d', '--database',
+                        help='database file to use',
                         nargs='?')
      
     sub = parser.add_subparsers(description='valid subcommands',
@@ -34,7 +37,7 @@ if __name__ == '__main__':
     p3.add_argument('id', help='folder id to show')
      
     p4 = sub.add_parser('diff',
-                        help='find items in folder a, not in folder b)')
+                        help='find differences items in folder structure')
     p4.add_argument('a', help='first folder id')
     p4.add_argument('b', help='second folder id')
     p4.add_argument('-a', '--all', action='store_true',
