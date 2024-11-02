@@ -69,9 +69,13 @@ Track, manage and consolidate files across multiple locations, external storage 
     cmd = sub.add_parser(
         'compare',
         help='find differences items in folder structure')
+    cmd.add_argument(
+        'type',
+        help='comparison type (default is folders)',
+        default='folders',
+        choices=['folders', 'files'])
     cmd.add_argument('a', help='first folder id')
     cmd.add_argument('b', help='second folder id')
-
     cmd.add_argument(
         'operation',
         default='difference',
@@ -110,6 +114,14 @@ Track, manage and consolidate files across multiple locations, external storage 
         'id',
         help='item id')
 
+    cmd = sub.add_parser(
+        'consolidate',
+        help='merge folders by id')
+    cmd.add_argument(
+        'items',
+        help='folder ids to merge',
+        nargs='+')
+    
     
     args = parser.parse_args()
     

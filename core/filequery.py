@@ -156,7 +156,7 @@ class FileQuery(object):
         if as_dict:
             items = {}
             for folder in folders:
-                items[folder['path']] = folder
+                items[folder['path']] = dict(folder)
         else:
             items = []
             for folder in folders:
@@ -175,7 +175,7 @@ class FileQuery(object):
             both       : in both a and b
             union      : all from a and b
         """
-        
+
         a = self.folder_hierarchy(a, as_dict=True)
         b = self.folder_hierarchy(b, as_dict=True)
 
@@ -225,14 +225,80 @@ class FileQuery(object):
         return items
         
 
-    def get_list(self, folder_id):
+    def file_compare(self, a, b, operation='difference'):
+        """Compare two folders (a and b).
+        
+        operations:
+            a-not-b    : in a, not in b
+            b-not-a    : in b, not in a
+            difference : in either a or b but not in both
+            both       : in both a and b
+            union      : all from a and b
+        """
+
+        a = self.get_list(a, as_dict=True)
+        b = self.get_list(b, as_dict=True)
+
         items = []
+        
+        if operation == 'a-not-b':
+            filtered = set(a.keys()) - set(b.keys())
+            items = list(map(lambda key: dict(a[key]), filtered))
+            
+        elif operation == 'b-not-a':
+            filtered = set(b.keys()) - set(a.keys())
+            items = list(map(lambda key: dict(b[key]), filtered))
+            
+        elif operation == 'difference':
+            diff = set(a.keys()).symmetric_difference(set(b.keys()))
+            for key in diff:
+                if key in a:
+                    items.append(dict(a[key]))
+                else:
+                    items.append(dict(b[key]))
+
+        elif operation == 'both':
+            intersection = set(a.keys()).intersection(set(b.keys()))
+            for key in intersection:
+                # hash exists in both sets - take first item
+                # and add second as a match
+                item = dict(a[key])
+                item['match'] = [b[key]['id']] # add as list to allow further matches
+                items.append(item)
+            
+        elif operation == 'union':
+            union = set(a.keys()).union(set(b.keys()))
+            for key in union:
+                # hash might exist in either set - if it does,
+                # add both references to returned item
+                if key in a:
+                    item = dict(a[key])
+                    if key in b:
+                        item['match'] = [b[key]['id']]
+                    items.append(item)
+                else:
+                    item = dict(b[key])
+                    if key in a:
+                        item['match'] = [a[key]['id']]
+                    items.append(item)
+
+        return items
+
+
+    
+    def get_list(self, folder_id, as_dict=False):
         sql = """
         SELECT * FROM `items` WHERE `folder` = %s
         """
         results = self.db.get_records(sql, (folder_id, ))
-        for item in results:
-            items.append(dict(item))
+        if as_dict:
+            items = {}
+            for item in results:
+                items[item['hash']] = dict(item)
+        else:
+            items = []
+            for item in results:
+                items.append(dict(item))
         return items
     
 

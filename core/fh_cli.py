@@ -117,18 +117,22 @@ class CLI(object):
 
 
     def compare(self):
-        for folder in self.query.folder_compare(
-                self.args.a,
-                self.args.b,
-                self.args.operation
-        ):
-            self.output(folder)
-
-
-    def merge(self):
-        for folder in self.query.folder_merge(self.args.a, self.args.b):
-            self.output(folder)
-            
+        t = self.args.type
+        if t == 'folders':
+            for folder in self.query.folder_compare(
+                    self.args.a,
+                    self.args.b,
+                    self.args.operation
+            ):
+                self.output(folder)
+        elif t == 'files':
+            for item in self.query.file_compare(
+                    self.args.a,
+                    self.args.b,
+                    self.args.operation
+            ):
+                self.output(item)
+                
 
     def list(self):
         for item in self.query.get_list(self.args.item):
@@ -149,3 +153,11 @@ class CLI(object):
             item = self.query.get_folder(self.args.id)
         if item:
             self.output(item)
+
+
+    def consolidate(self):
+        print(self.args.items)
+        # take each item (folder id), compare it with the others, etc...
+        
+
+            
