@@ -185,8 +185,11 @@ class CLI(object):
                     
         tree = self.query.get_tree(self.args.folder, files=self.args.files)
 
-        for node in tree:
-            print_node(node)
+        if self.fmt == 'json':
+            print(json.dumps(tree))
+        else:
+            for node in tree:
+                print_node(node)
         
 
     def consolidate(self):
