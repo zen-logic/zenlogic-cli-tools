@@ -53,11 +53,15 @@ Track, manage and consolidate files across multiple locations, external storage 
     cmd.add_argument(
         '-e', '--end',
         action='store_true',
-        help='match to end of path')
+        help='match to end')
     cmd.add_argument(
         '-s', '--start',
         action='store_true',
-        help='match to start of path')
+        help='match to start')
+    cmd.add_argument(
+        '-p', '--partial',
+        action='store_true',
+        help='partial match')
      
     cmd = sub.add_parser(
         'hierarchy',

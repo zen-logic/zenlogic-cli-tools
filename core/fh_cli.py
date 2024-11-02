@@ -92,10 +92,20 @@ class CLI(object):
     def find(self):
         t = self.args.type
         if t == 'file':
-            for item in self.query.find_file_name(self.args.item, case_insensitive=True):
+            for item in self.query.find_file_name(
+                    self.args.item,
+                    partial=self.args.partial,
+                    start=self.args.start,
+                    end=self.args.end,
+                    case_insensitive=True):
                 self.output(item)
         elif t == 'folder':
-            for item in self.query.find_folder_name(self.args.item, case_insensitive=True):
+            for item in self.query.find_folder_name(
+                    self.args.item,
+                    partial=self.args.partial,
+                    start=self.args.start,
+                    end=self.args.end,
+                    case_insensitive=True):
                 self.output(item)
         elif t == 'ext':
             for item in self.query.find_ext(self.args.item, case_insensitive=True):

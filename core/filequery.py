@@ -54,15 +54,29 @@ class FileQuery(object):
         return items
     
 
-    def find_file_name(self, filename, case_insensitive=False):
+    def find_file_name(self, filename,
+                       partial=False,
+                       start=False,
+                       end=False,
+                       case_insensitive=False):
         items = []
         sql = """
         SELECT f1.*, f2.fullpath, r.name AS `rootname`, r.path AS `rootpath`
         FROM `items` f1
             LEFT JOIN `folders` f2 ON f1.folder = f2.id
             LEFT JOIN `roots` r ON f1.root = r.id
-        WHERE f1.`name` = %s
         """
+        if partial:
+            sql += " WHERE f1.`name` LIKE %s"
+            if start:
+                filename = f'{filename}%'
+            elif end:
+                filename = f'%{filename}'
+            else:
+                filename = f'%{filename}%'
+        else:
+            sql += " WHERE f1.`name` = %s"
+
         if case_insensitive:
             sql += " COLLATE NOCASE"
         
@@ -73,14 +87,29 @@ class FileQuery(object):
         return items
     
 
-    def find_folder_name(self, foldername, case_insensitive=False):
+    def find_folder_name(self, foldername,
+                         partial=False,
+                         start=False,
+                         end=False,
+                         case_insensitive=False):
         items = []
         sql = """
         SELECT f.*, r.name AS `rootname`, r.path AS `rootpath`
         FROM `folders` f
             LEFT JOIN `roots` r ON f.root = r.id
-        WHERE f.`name` = %s
         """
+
+        if partial:
+            sql += " WHERE f.`name` LIKE %s"
+            if start:
+                foldername = f'{foldername}%'
+            elif end:
+                foldername = f'%{foldername}'
+            else:
+                foldername = f'%{foldername}%'
+        else:
+            sql += " WHERE f.`name` = %s"
+
         if case_insensitive:
             sql += " COLLATE NOCASE"
 
