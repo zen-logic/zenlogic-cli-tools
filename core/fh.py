@@ -94,6 +94,13 @@ Track, manage and consolidate files across multiple locations, external storage 
         help="folder id")
 
     cmd = sub.add_parser(
+        'items',
+        help='list files and folders in folder id')
+    cmd.add_argument(
+        'item',
+        help="folder id")
+
+    cmd = sub.add_parser(
         'roots',
         help='list storage roots')
 

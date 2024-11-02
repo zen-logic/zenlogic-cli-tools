@@ -265,8 +265,8 @@ class FileQuery(object):
             union      : all from a and b
         """
 
-        a = self.get_list(a, as_dict=True)
-        b = self.get_list(b, as_dict=True)
+        a = self.get_items(a, as_dict=True)
+        b = self.get_items(b, as_dict=True)
 
         items = []
         
@@ -314,7 +314,7 @@ class FileQuery(object):
         return items
 
 
-    def get_list(self, folder_id, as_dict=False):
+    def get_items(self, folder_id, as_dict=False):
         sql = """
         SELECT * FROM `items` WHERE `folder` = %s
         """
@@ -373,3 +373,23 @@ class FileQuery(object):
             })
 
         return items
+
+
+    def get_folder_list(self, folder_id):
+        items = []
+        sql = "SELECT * FROM `folders` WHERE `parent` = %s"
+        folders = self.db.get_records(sql, (folder_id,))
+        for folder in folders:
+            folder = dict(folder)
+            folder['type'] = 'folder'
+            items.append(folder)
+        
+        sql = "SELECT * FROM `items` WHERE `folder` = %s"
+        files = self.db.get_records(sql, (folder_id,))
+        for item in files:
+            item = dict(item)
+            item['type'] = 'file'
+            items.append(item)
+
+        return items
+    

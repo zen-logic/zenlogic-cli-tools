@@ -145,9 +145,14 @@ class CLI(object):
                 
 
     def list(self):
-        for item in self.query.get_list(self.args.item):
+        for item in self.query.get_items(self.args.item):
             self.output(item)
 
+
+    def items(self):
+        for item in self.query.get_folder_list(self.args.item):
+            self.output(item)
+            
                 
     def roots(self):
         for root in self.query.get_roots():
