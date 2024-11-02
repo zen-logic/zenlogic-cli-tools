@@ -38,6 +38,7 @@ class Database(object):
 
     def __init__(self, db_file):
         self.con = None
+        self.cur = None
         self.db_file = db_file
 
         
@@ -120,7 +121,7 @@ class Database(object):
         return record
 
 
-    def get_records(self, sql, params):
+    def get_records(self, sql, params, cursor=None):
         sql = sql.replace('%s', '?')
         self.get_connection()
         cur = self.con.cursor()
@@ -129,7 +130,6 @@ class Database(object):
         else:
             cur.execute(sql)
         records = cur.fetchall()
-
         cur.close()
         return records
 

@@ -139,7 +139,18 @@ Track, manage and consolidate files across multiple locations, external storage 
         'items',
         help='folder ids to merge',
         nargs='+')
-    
+
+    cmd = sub.add_parser(
+        'tree',
+        help='folder tree')
+    cmd.add_argument(
+        'folder',
+        help='folder id to retrieve')
+    cmd.add_argument(
+        '-f', '--files',
+        action='store_true',
+        help='show files')
+ 
     
     args = parser.parse_args()
     

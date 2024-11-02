@@ -175,6 +175,20 @@ class CLI(object):
             self.output(item)
 
 
+    def tree(self):
+        
+        def print_node(node, depth=0, indent=2):
+            print(f"{str(node['id']).rjust(8)}  {' ' * depth * indent}{node['name']}")
+            if node.get('children',False):
+                for child in node['children']:
+                    print_node(child, depth=depth+1)
+                    
+        tree = self.query.get_tree(self.args.folder, files=self.args.files)
+
+        for node in tree:
+            print_node(node)
+        
+
     def consolidate(self):
         print(self.args.items)
         # take each item (folder id), compare it with the others, etc...

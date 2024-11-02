@@ -165,7 +165,7 @@ class FileQuery(object):
         return items
     
     
-    def folder_hierarchy(self, folder_id, as_dict=False):
+    def folder_hierarchy(self, folder_id, as_dict=False, key='path'):
         sql = """
         WITH RECURSIVE FolderHierarchy AS (
             SELECT *, name AS path
@@ -185,7 +185,7 @@ class FileQuery(object):
         if as_dict:
             items = {}
             for folder in folders:
-                items[folder['path']] = dict(folder)
+                items[folder[key]] = dict(folder)
         else:
             items = []
             for folder in folders:
@@ -393,3 +393,28 @@ class FileQuery(object):
 
         return items
     
+
+    def get_tree(self, folder_id, depth=0, indent=4, files=False):
+        hierarchy = self.folder_hierarchy(folder_id, as_dict=True, key='id')
+
+        tree = []
+        for key, item in hierarchy.items():        
+            if item['parent'] == None:
+                tree.append(item)
+            else:
+                parent = hierarchy[item['parent']]
+                if not 'children' in parent:
+                    parent['children'] = []
+                children = parent['children']
+                children.append(item)
+
+            if files:
+                sql = "SELECT * FROM `items` WHERE `folder` = %s"
+                files = self.db.get_records(sql, (item['id'],))
+                for f in files:
+                    if not 'children' in item:
+                        item['children'] = []
+                    children = item['children']
+                    children.append(dict(f))
+                
+        return tree
