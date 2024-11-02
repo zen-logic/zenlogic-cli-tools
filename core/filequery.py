@@ -314,7 +314,6 @@ class FileQuery(object):
         return items
 
 
-    
     def get_list(self, folder_id, as_dict=False):
         sql = """
         SELECT * FROM `items` WHERE `folder` = %s
@@ -353,3 +352,24 @@ class FileQuery(object):
             return None
         
     
+    def get_root(self, root_id):
+        items = []
+        sql = "SELECT * FROM `folders` WHERE `root` = %s AND `parent` IS NULL"
+        folders = self.db.get_records(sql, (root_id,))
+        for folder in folders:
+            items.append({
+                'type': 'folder',
+                'id': folder['id'],
+                'name': folder['name']
+            })
+        
+        sql = "SELECT * FROM `items` WHERE `root` = %s AND `folder` IS NULL"
+        files = self.db.get_records(sql, (root_id,))
+        for item in files:
+            items.append({
+                'type': 'file',
+                'id': item['id'],
+                'name': item['name']
+            })
+
+        return items

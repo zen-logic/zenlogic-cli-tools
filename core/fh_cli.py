@@ -153,6 +153,11 @@ class CLI(object):
         for root in self.query.get_roots():
             print(str(root['id']).rjust(5), root['name'].ljust(20), root['path'])
 
+
+    def root(self):
+        for item in self.query.get_root(self.args.item):
+            self.output(item)
+            
             
     def get(self):
         item = None

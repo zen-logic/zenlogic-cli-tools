@@ -98,6 +98,13 @@ Track, manage and consolidate files across multiple locations, external storage 
         help='list storage roots')
 
     cmd = sub.add_parser(
+        'root',
+        help='list storage root contents')
+    cmd.add_argument(
+        'item',
+        help="root id")
+
+    cmd = sub.add_parser(
         'scan',
         help='scan folder/drive and create a storage root')
     cmd.add_argument(
