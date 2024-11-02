@@ -1,16 +1,16 @@
 # Zen Logic CLI tools
-#### File Hunter
+### File Hunter
 
 A command line utility and library to track, locate, match and identify duplicate files across multiple file paths, external storage (such as USB drives) or network mounts.
 
 Scan file root and add files to database:
 ```shell
-$ fh scan <name> <path>
+$ zfh scan <name> <path>
 ```
 
 Show available file roots:
 ```shell
-$ fh roots
+$ zfh roots
 ```
 
 example output:
