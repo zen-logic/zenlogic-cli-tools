@@ -25,8 +25,8 @@ class FileQuery(object):
             sql = """
             SELECT f1.*, f2.fullpath, r.name AS `rootname`, r.path AS `rootpath`
             FROM `items` f1
-                JOIN `folders` f2 ON f1.folder = f2.id
-                JOIN `roots` r ON f1.root = r.id
+                LEFT JOIN `folders` f2 ON f1.folder = f2.id
+                LEFT JOIN `roots` r ON f1.root = r.id
             WHERE `hash` = %s
             """
             
@@ -42,8 +42,8 @@ class FileQuery(object):
         sql = """
         SELECT f1.*, f2.fullpath, r.name AS `rootname`, r.path AS `rootpath`
         FROM `items` f1
-            JOIN `folders` f2 ON f1.folder = f2.id
-            JOIN `roots` r ON f1.root = r.id
+            LEFT JOIN `folders` f2 ON f1.folder = f2.id
+            LEFT JOIN `roots` r ON f1.root = r.id
         WHERE `hash` = %s
         """
         
@@ -59,8 +59,8 @@ class FileQuery(object):
         sql = """
         SELECT f1.*, f2.fullpath, r.name AS `rootname`, r.path AS `rootpath`
         FROM `items` f1
-            JOIN `folders` f2 ON f1.folder = f2.id
-            JOIN `roots` r ON f1.root = r.id
+            LEFT JOIN `folders` f2 ON f1.folder = f2.id
+            LEFT JOIN `roots` r ON f1.root = r.id
         WHERE f1.`name` = %s
         """
         if case_insensitive:
@@ -78,7 +78,7 @@ class FileQuery(object):
         sql = """
         SELECT f.*, r.name AS `rootname`, r.path AS `rootpath`
         FROM `folders` f
-            JOIN `roots` r ON f.root = r.id
+            LEFT JOIN `roots` r ON f.root = r.id
         WHERE f.`name` = %s
         """
         if case_insensitive:
@@ -98,7 +98,7 @@ class FileQuery(object):
         sql = """
         SELECT f.*, r.name AS `rootname`, r.path AS `rootpath`
         FROM `folders` f
-            JOIN `roots` r ON f.root = r.id
+            LEFT JOIN `roots` r ON f.root = r.id
         WHERE f.`fullpath` LIKE %s
         """
         sql += " ORDER BY `root`, `fullpath`"
@@ -122,8 +122,8 @@ class FileQuery(object):
         sql = """
         SELECT f1.*, f2.fullpath, r.name AS `rootname`, r.path AS `rootpath`
         FROM `items` f1
-            JOIN `folders` f2 ON f1.folder = f2.id
-            JOIN `roots` r ON f1.root = r.id
+            LEFT JOIN `folders` f2 ON f1.folder = f2.id
+            LEFT JOIN `roots` r ON f1.root = r.id
         WHERE f1.`ext` = %s
         """
         if case_insensitive:
@@ -226,7 +226,7 @@ class FileQuery(object):
         
 
     def file_compare(self, a, b, operation='difference'):
-        """Compare two folders (a and b).
+        """Compare files in two folders (a and b).
         
         operations:
             a-not-b    : in a, not in b
