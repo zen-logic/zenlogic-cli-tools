@@ -1,10 +1,10 @@
 import os, argparse
-from fh_cli import CLI
+from cli_fh import CLI
 
 if __name__ == '__main__':
     # create the top-level parser
     parser = argparse.ArgumentParser(
-        prog='fh',
+        prog='zfh',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=f'''
 Zen Logic file hunter
@@ -131,14 +131,6 @@ Track, manage and consolidate files across multiple locations, external storage 
     cmd.add_argument(
         'id',
         help='item id')
-
-    cmd = sub.add_parser(
-        'consolidate',
-        help='merge folders by id')
-    cmd.add_argument(
-        'items',
-        help='folder ids to merge',
-        nargs='+')
 
     cmd = sub.add_parser(
         'tree',

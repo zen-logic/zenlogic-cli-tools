@@ -1,50 +1,21 @@
 import os, sys, pathlib, json
+from cli_base import BaseCLI
 from filescan import FileScan
 from filequery import FileQuery
-from fileops import FileOps
-from db_sqlite import Database
 
 
-def home_dir():
-    return pathlib.Path.home().resolve()
-
-def script_dir():
-    return pathlib.Path(__file__).parent.resolve()
-
-def data_dir():
-    path = home_dir()
-    path = os.path.join(path, '.zenlogic')
-    if not os.path.exists(path):
-        os.mkdir(path)
-    return path
-
-
-class CLI(object):
+class CLI(BaseCLI):
     
     def __init__(self, args):
-        self.args = args
-        self.setup()
-
-        if self.args.database:
-            db_file = self.args.database
-        else:
-            db_file = os.path.join(data_dir(), 'fh.db')
-        self.db = Database(db_file)
-
-        self.query = FileQuery(self.db)
-        self.scanner = FileScan(self.db)
-        self.ops = FileOps(self.db)
-        if not os.path.exists(db_file):
-            blank = os.path.join(script_dir(), 'blank.sql')
-            self.db.run_sql_file(blank)
-            
-        if hasattr(self, args.command):
-            getattr(self, args.command)()
+        super().__init__(args)
 
             
     def setup(self):
+        super().setup()
         self.fmt = self.args.output
         self.fields = self.args.fields
+        self.query = FileQuery(self.db)
+        self.scanner = FileScan(self.db)
         
 
     def output(self, data):
@@ -191,10 +162,6 @@ class CLI(object):
             for node in tree:
                 print_node(node)
         
-
-    def consolidate(self):
-        print(self.args.items)
-        # take each item (folder id), compare it with the others, etc...
         
 
             

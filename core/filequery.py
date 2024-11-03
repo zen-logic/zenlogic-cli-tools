@@ -15,6 +15,12 @@ class FileQuery(object):
         for root in roots:
             items.append(dict(root))
         return items
+
+
+    def root_path(self, root_id):
+        sql = "SELECT * FROM `roots` WHERE `id` = %s"
+        root = self.db.get_record(sql, (root_id,))
+        return root['path']
     
 
     def match_file(self, path):

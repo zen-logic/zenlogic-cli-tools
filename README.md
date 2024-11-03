@@ -6,7 +6,7 @@ The file tools use a local sqlite3 database to store information about files tha
 
 Using the database allows quick location of files and folders as well as rapid matching (and identification) of duplicate files.
 
-### File Hunter
+### zfh - Zen File Hunter
 
 A utility to track, locate and identify files and duplicates across multiple file paths, external storage (such as USB drives) or network mounts.
 
@@ -28,5 +28,7 @@ example output:
   4 EVO 970 EVO+         /Volumes/EVO 970 EVO+/
   5 Crucial 2TB          /Volumes/Crucial 2TB/
 ```
+
+### zfm - Zen File Manager
 
 
