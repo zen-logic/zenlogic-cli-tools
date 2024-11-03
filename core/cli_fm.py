@@ -38,5 +38,8 @@ class CLI(BaseCLI):
                                             root=self.args.root,
                                             mount=self.args.mount)
         if result:
-            print(result)
+            if isinstance(result, list):
+                print('\n'.join(result))
+            else:
+                print(result)
         
