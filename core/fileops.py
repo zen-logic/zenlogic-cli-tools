@@ -110,7 +110,6 @@ class FileOps(object):
 
             # get all the files to copy
             if path in paths:
-                print(path)
                 folder_ids = list(map(lambda item: item['id'], paths[path]))
                 file_paths = self.get_file_paths_from_folders(*folder_ids, root=root, mount=mount)
 
