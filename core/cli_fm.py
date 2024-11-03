@@ -40,6 +40,7 @@ class CLI(BaseCLI):
         if result:
             if isinstance(result, list):
                 print('Errors:')
+                print('  ', end='')
                 print('\n  '.join(result))
             else:
                 print(result)
