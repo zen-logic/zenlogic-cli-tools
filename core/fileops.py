@@ -11,6 +11,7 @@ class FileOps(object):
 
     def get_file_path(self, file_id, root=None, mount=None):
         item = self.query.get_item(file_id)
+        print(item)
         if folder in item:
             file_path = self.query.get_folder(item['folder'])['fullpath']
         else:
