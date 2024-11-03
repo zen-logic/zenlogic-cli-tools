@@ -11,11 +11,10 @@ class FileOps(object):
 
     def get_file_path(self, file_id, root=None, mount=None):
         item = self.query.get_item(file_id)
+        file_path = ''
         if 'folder' in item:
-            print(item)
-            file_path = self.query.get_folder(item['folder'])['fullpath']
-        else:
-            file_path = ''
+            if item['folder']:
+                file_path = self.query.get_folder(item['folder'])['fullpath']
 
         if not root:
             root = self.query.root_path(item['root'])
