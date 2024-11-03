@@ -101,7 +101,7 @@ class FileOps(object):
             if path and path[0] == '/':
                 path = path[1:]
             dst_path = os.path.join(pathlib.Path(dst).resolve(), path)
-            print(f'Creating folder: {dst_path}')
+            # print(f'Creating folder: {dst_path}')
             if not os.path.exists(dst_path):
                 try:
                     os.makedirs(dst_path)
