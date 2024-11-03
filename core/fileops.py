@@ -109,8 +109,10 @@ class FileOps(object):
                     print(error)
 
             # get all the files to copy
-            folder_ids = list(map(lambda item: item['id'], paths[path]))
-            file_paths = self.get_file_paths_from_folders(*folder_ids, root=root, mount=mount)
+            file_paths = []
+            if path in paths:
+                folder_ids = list(map(lambda item: item['id'], paths[path]))
+                file_paths = self.get_file_paths_from_folders(*folder_ids, root=root, mount=mount)
 
             # copy all the files
             for file_path in file_paths:
