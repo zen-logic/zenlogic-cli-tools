@@ -48,7 +48,9 @@ class FileOps(object):
         for folder in folders:
             file_list = self.query.get_items(folder, as_dict=True)
             files = files | file_list # merge both dicts
- 
+
+        print(files)
+            
         for key, item in files.items():
             file_path = self.get_file_path(item['id'], root=root, mount=mount)
 
