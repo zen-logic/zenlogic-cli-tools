@@ -102,4 +102,3 @@ class FileScan(object):
             self.root_id = existing['id']
         else:
             self.root_id = self.db.add_record('roots', {'name': name, 'path': root})
-        self.process_folder('')

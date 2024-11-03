@@ -53,6 +53,7 @@ class CLI(BaseCLI):
     def scan(self):
         self.scanner.verbose = True
         self.scanner.add_root(self.args.name, self.args.path)
+        self.scanner.process_folder('')
 
         
     def match(self):

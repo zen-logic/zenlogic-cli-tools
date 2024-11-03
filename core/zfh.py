@@ -30,7 +30,8 @@ Track, manage and consolidate files across multiple locations, external storage 
      
     sub = parser.add_subparsers(
         description='valid subcommands',
-        dest='command')
+        dest='command',
+        metavar='')
      
     # create the command parsers
     cmd = sub.add_parser(
@@ -72,7 +73,7 @@ Track, manage and consolidate files across multiple locations, external storage 
      
     cmd = sub.add_parser(
         'compare',
-        help='find differences items in folder structure')
+        help='find differences in folder structure')
     cmd.add_argument(
         'type',
         help='comparison type (default is folders)',

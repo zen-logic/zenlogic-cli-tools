@@ -28,18 +28,32 @@ Zen Logic file manager
     
     sub = parser.add_subparsers(
         description='valid subcommands',
-        dest='command')
+        dest='command',
+        metavar='')
      
     # create the command parsers
     cmd = sub.add_parser(
-        'get',
-        help='get file by id')
+        'copy',
+        help='copy file by id')
     cmd.add_argument(
         'id',
         help='file id to retrieve')
     cmd.add_argument(
         'dst',
         help='where to copy the file')
+
+    cmd = sub.add_parser(
+        'merge',
+        help='merge folders')
+    cmd.add_argument(
+        '-d', '--dst',
+        required=True,
+        help='where to copy the file')
+    cmd.add_argument(
+        'folders',
+        nargs='*',
+        help='list of folder ids to merge')
+
     
     args = parser.parse_args()
     

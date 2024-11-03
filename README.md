@@ -31,4 +31,7 @@ example output:
 
 ### zfm - Zen File Manager
 
-
+Retrieve file by id:
+```shell
+$ zfm get 110606 ./
+```

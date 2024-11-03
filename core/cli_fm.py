@@ -17,9 +17,17 @@ class CLI(BaseCLI):
         self.ops = FileOps(self.db)
         
         
-    def get(self):
-        result = self.ops.get_file(self.args.id, self.args.dst,
+    def copy(self):
+        result = self.ops.copy_file(self.args.id, self.args.dst,
                                    root=self.args.root,
                                    mount=self.args.mount)
-        print(result)
+        if result:
+            print(result)
+
+
+    def merge(self):
+        result = self.ops.merge(*self.args.folders,
+                                dst=self.args.dst,
+                                root=self.args.root,
+                                mount=self.args.mount)
         
