@@ -114,7 +114,7 @@ class FileOps(object):
                 file_paths = self.get_file_paths_from_folders(*folder_ids, root=root, mount=mount)
                 print('='*80)
                 print(folder_ids)
-                print(file_paths)
+                print('\n'.join(file_paths))
                 print('='*80)
                 # copy all the files
                 for file_path in file_paths:
