@@ -114,7 +114,10 @@ class FileOps(object):
             for file_path in file_paths:
                 if os.path.exists(file_path):
                     print(f'Copying: {file_path}')
-                    shutil.copy2(file_path, dst_path)
+                    try:
+                        shutil.copy2(file_path, dst_path)
+                    except OSError as error:
+                        print(error)
                 else:
                     copy_errors.append(file_path)
 
