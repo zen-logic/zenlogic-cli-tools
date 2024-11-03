@@ -113,16 +113,16 @@ class FileOps(object):
                 folder_ids = list(map(lambda item: item['id'], paths[path]))
                 file_paths = self.get_file_paths_from_folders(*folder_ids, root=root, mount=mount)
 
-            # copy all the files
-            for file_path in file_paths:
-                if os.path.exists(file_path):
-                    print(f'Copying: {file_path}')
-                    try:
-                        shutil.copy2(file_path, dst_path)
-                    except OSError as error:
-                        print(error)
-                else:
-                    copy_errors.append(file_path)
+                # copy all the files
+                for file_path in file_paths:
+                    if os.path.exists(file_path):
+                        print(f'Copying: {file_path}')
+                        try:
+                            shutil.copy2(file_path, dst_path)
+                        except OSError as error:
+                            print(error)
+                    else:
+                        copy_errors.append(file_path)
 
         if len(copy_errors) > 0:
             return copy_errors
