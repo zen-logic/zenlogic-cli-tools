@@ -103,8 +103,8 @@ class FileOps(object):
             if not os.path.exists(dst_path):
                 try:
                     os.makedirs(dst_path)
-                except OSError e:
-                    print(e)
+                except OSError as error:
+                    print(error)
 
             # get all the files to copy
             folder_ids = list(map(lambda item: item['id'], paths[path]))
