@@ -101,7 +101,10 @@ class FileOps(object):
             dst_path = os.path.join(pathlib.Path(dst).resolve(), path)
             print(f'Creating folder: {dst_path}')
             if not os.path.exists(dst_path):
-                os.makedirs(dst_path)
+                try:
+                    os.makedirs(dst_path)
+                except OSError e:
+                    print(e)
 
             # get all the files to copy
             folder_ids = list(map(lambda item: item['id'], paths[path]))
