@@ -98,7 +98,7 @@ class FileOps(object):
 
         for path in paths:
             # create new folders as necessary
-            if path[0] == '/':
+            if path and path[0] == '/':
                 path = path[1:]
             dst_path = os.path.join(pathlib.Path(dst).resolve(), path)
             print(f'Creating folder: {dst_path}')
