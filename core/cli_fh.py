@@ -69,7 +69,7 @@ class CLI(BaseCLI):
                     partial=self.args.partial,
                     start=self.args.start,
                     end=self.args.end,
-                    case_insensitive=True):
+                    case_insensitive=self.args.ignorecase):
                 self.output(item)
         elif t == 'folder':
             for item in self.query.find_folder_name(
@@ -77,7 +77,7 @@ class CLI(BaseCLI):
                     partial=self.args.partial,
                     start=self.args.start,
                     end=self.args.end,
-                    case_insensitive=True):
+                    case_insensitive=self.args.ignorecase):
                 self.output(item)
         elif t == 'ext':
             for item in self.query.find_ext(self.args.item, case_insensitive=True):

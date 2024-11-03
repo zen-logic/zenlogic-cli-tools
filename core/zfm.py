@@ -50,6 +50,10 @@ Zen Logic file manager
         required=True,
         help='where to copy the file')
     cmd.add_argument(
+        '-r', '--recurse',
+        action='store_true',
+        help='merge entire folder hierarchy')
+    cmd.add_argument(
         'folders',
         nargs='*',
         help='list of folder ids to merge')

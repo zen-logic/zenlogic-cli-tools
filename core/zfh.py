@@ -56,6 +56,10 @@ Track, manage and consolidate files across multiple locations, external storage 
         action='store_true',
         help='match to end')
     cmd.add_argument(
+        '-i', '--ignorecase',
+        action='store_true',
+        help='ignore case')
+    cmd.add_argument(
         '-s', '--start',
         action='store_true',
         help='match to start')

@@ -39,25 +39,78 @@ class FileOps(object):
             return f'Destination not found:\n\t{dst}'
             
 
-    def merge(self, *folders, dst='', root=None, mount=None):
+    def get_file_paths_from_folders(self, *folders, root=None, mount=None):
+        paths = []
+        files = {}
+        for folder in folders:
+            file_list = self.query.get_items(folder, as_dict=True)
+            files = files | file_list # merge both dicts
+ 
+        for key, item in files.items():
+            file_path = self.get_file_path(item['id'], root=root, mount=mount)
+
+            # if file is missing, try and find another matching file
+            if not os.path.exists(file_path):
+                alternatives = self.query.find_hash(item['hash'])
+                for alt in alternatives:
+                    file_path = self.get_file_path(alt['id'], root=root, mount=mount)
+                    if os.path.exists(file_path):
+                        break
+                    
+            paths.append(file_path)
+
+        return paths
+
+    
+    def merge_folders(self, *folders, dst='./', root=None, mount=None):
         if os.path.exists(dst) and os.path.isdir(dst):
             copy_errors = []
-            files = {}
-            for folder in folders:
-                file_list = self.query.get_items(folder, as_dict=True)
-                files = files | file_list # merge both dicts
-     
-            for key, item in files.items():
-                file_path = self.get_file_path(item['id'], root=root, mount=mount)
-                # if file is missing, we could try and 
-                # find another file hash that matches?
+            file_paths = self.get_file_paths_from_folders(*folders, root=root, mount=mount)
+            for file_path in file_paths:
                 if os.path.exists(file_path):
                     shutil.copy2(file_path, dst)
                 else:
                     copy_errors.append(file_path)
-
             if len(copy_errors) > 0:
-                return '\n'.join(copy_errors)
+                return copy_errors
         else:
             return f'Destination not found:\n\t{dst}'
             
+
+    def merge_folder_trees(self, *folders, dst='./', root=None, mount=None):
+        copy_errors = []
+        
+        # get all folders to work on
+        paths = {}
+        for folder_id in folders:
+            folder = self.query.get_folder(folder_id)
+            base = folder['fullpath']
+            tree = self.query.folder_hierarchy(folder_id)
+            for item in tree:
+                path = item['fullpath']
+                path = path.replace(base, '')
+                if not path in paths:
+                    paths[path] = []
+                paths[path].append(item)
+
+        for path in paths:
+            # create new folders as necessary
+            dst_path = os.path.join(pathlib.Path(dst).resolve(), path)
+            if not os.path.exists(dst_path):
+                os.makedirs(dst_path)
+            print(f'Creating folder: {dst_path}')
+
+            # get all the files to copy
+            folder_ids = list(map(lambda item: item['id'], paths[path]))
+            file_paths = self.get_file_paths_from_folders(*folder_ids, root=root, mount=mount)
+
+            # copy all the files
+            for file_path in file_paths:
+                if os.path.exists(file_path):
+                    print(f'Copying: {file_path}')
+                    shutil.copy2(file_path, dst_path)
+                else:
+                    copy_errors.append(file_path)
+
+        if len(copy_errors) > 0:
+            return copy_errors
