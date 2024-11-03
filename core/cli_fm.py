@@ -39,7 +39,7 @@ class CLI(BaseCLI):
                                             mount=self.args.mount)
         if result:
             if isinstance(result, list):
-                print('Errors:')
+                print('Copy errors:')
                 print('  ', end='')
                 print('\n  '.join(result))
             else:
