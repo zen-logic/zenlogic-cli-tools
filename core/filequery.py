@@ -402,10 +402,9 @@ class FileQuery(object):
 
     def get_tree(self, folder_id, depth=0, indent=4, files=False):
         hierarchy = self.folder_hierarchy(folder_id, as_dict=True, key='id')
-
         tree = []
-        for key, item in hierarchy.items():        
-            if item['parent'] == None:
+        for key, item in hierarchy.items():
+            if item['parent'] == None or item['parent'] not in hierarchy:
                 tree.append(item)
             else:
                 parent = hierarchy[item['parent']]
