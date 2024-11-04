@@ -1,5 +1,6 @@
 import os, sys, pathlib, shutil
 from filequery import FileQuery
+import pprint
 
 
 class FileOps(object):
@@ -49,8 +50,6 @@ class FileOps(object):
             file_list = self.query.get_items(folder, as_dict=True)
             files = files | file_list # merge both dicts
 
-        print(files)
-            
         for key, item in files.items():
             file_path = self.get_file_path(item['id'], root=root, mount=mount)
 
@@ -58,9 +57,11 @@ class FileOps(object):
             if not os.path.exists(file_path):
                 alternatives = self.query.find_hash(item['hash'])
                 for alt in alternatives:
-                    file_path = self.get_file_path(alt['id'], root=root, mount=mount)
-                    if os.path.exists(file_path):
-                        break
+                    if alt['name'] == item['name']:
+                        test = self.get_file_path(alt['id'], root=root, mount=mount)
+                        if os.path.exists(test):
+                            file_path = test
+                            break
                     
             paths.append(file_path)
 
@@ -84,6 +85,8 @@ class FileOps(object):
 
     def merge_folder_trees(self, *folders, dst='./', root=None, mount=None):
         copy_errors = []
+
+        dst = pathlib.Path(dst).resolve()
         
         # get all folders to work on
         paths = {}
@@ -99,35 +102,30 @@ class FileOps(object):
                 paths[path].append(item)
 
         for path in paths:
-            # create new folders as necessary
-            if path and path[0] == '/':
-                path = path[1:]
-            dst_path = os.path.join(pathlib.Path(dst).resolve(), path)
-            # print(f'Creating folder: {dst_path}')
+            dst_path = os.path.join(pathlib.Path(dst).resolve(),
+                                    path[1:] if path != '' else '')
+
+            print(f'Creating folder: {dst_path}')
             if not os.path.exists(dst_path):
                 try:
                     os.makedirs(dst_path)
                 except OSError as error:
                     print(error)
+            
+            folder_ids = list(map(lambda item: item['id'], paths[path]))
+            print(folder_ids)
 
-            # get all the files to copy
-            if path in paths:
-                folder_ids = list(map(lambda item: item['id'], paths[path]))
-                file_paths = self.get_file_paths_from_folders(*folder_ids, root=root, mount=mount)
-                print('='*80)
-                print(folder_ids)
-                print('\n'.join(file_paths))
-                print('='*80)
-                # copy all the files
-                for file_path in file_paths:
-                    if os.path.exists(file_path):
-                        print(f'Copying: {file_path}')
-                        try:
-                            shutil.copy2(file_path, dst_path)
-                        except OSError as error:
-                            print(error)
-                    else:
-                        copy_errors.append(file_path)
-
+            file_paths = self.get_file_paths_from_folders(*folder_ids, root=root, mount=mount)
+            for file_path in file_paths:
+                print(f'Copying: {file_path}')
+                if os.path.exists(file_path):
+                    pass
+                    # try:
+                    #     shutil.copy2(file_path, dst_path)
+                    # except OSError as error:
+                    #     print(error)
+                else:
+                    copy_errors.append(file_path)
+            
         if len(copy_errors) > 0:
             return copy_errors
