@@ -162,13 +162,10 @@ class FileOps(object):
                     'value': item['id']
                 })
 
-
-        # collect all the files we are have removed
-        for folder_id in delete_folders:
-            file_list = self.query.get_items(folder_id)
-            for item in file_list:
-                self.db.delete_records('items', {
-                    'field': 'id',
-                    'value': item['id']
-                })
+                file_list = self.query.get_items(item['id'])
+                for item in file_list:
+                    self.db.delete_records('items', {
+                        'field': 'id',
+                        'value': item['id']
+                    })
 
