@@ -30,6 +30,21 @@ class FileOps(object):
         return file_path
         
         
+    def get_folder_path(self, folder_id, root=None, mount=None):
+        folder = self.query.get_folder(folder_id)
+        file_path = folder['fullpath']
+        if not root:
+            root = self.query.root_path(folder['root'])
+            if mount:
+                mount = pathlib.Path(mount).resolve()
+                if root[0] == '/':
+                    root = root[1:]
+                root = os.path.join(mount, root)
+                
+        file_path = os.path.join(root, file_path)
+        return file_path
+        
+        
     def copy_file(self, file_id, dst, root=None, mount=None):
         file_path = self.get_file_path(file_id, root=root, mount=mount)
         dst = pathlib.Path(dst).resolve()
@@ -119,13 +134,41 @@ class FileOps(object):
             for file_path in file_paths:
                 print(f'Copying: {file_path}')
                 if os.path.exists(file_path):
-                    pass
-                    # try:
-                    #     shutil.copy2(file_path, dst_path)
-                    # except OSError as error:
-                    #     print(error)
+                    try:
+                        shutil.copy2(file_path, dst_path)
+                    except OSError as error:
+                        print(error)
                 else:
                     copy_errors.append(file_path)
             
         if len(copy_errors) > 0:
             return copy_errors
+
+
+    def purge_folders(self, *folders, root=None, mount=None):
+
+        # delete physical files and folders
+        for folder in folders:
+            path = self.get_folder_path(folder, root=root, mount=mount)
+            print(path)
+            # shutil.rmtree(path)
+        
+        # collect all the folders we are have removed
+        for folder in folders:
+            folder_list = self.query.folder_hierarchy(folder)
+            for item in folder_list:
+                self.db.delete_records('folders', {
+                    'field': 'id',
+                    'value': item['id']
+                })
+
+
+        # collect all the files we are have removed
+        for folder_id in delete_folders:
+            file_list = self.query.get_items(folder_id)
+            for item in file_list:
+                self.db.delete_records('items', {
+                    'field': 'id',
+                    'value': item['id']
+                })
+

@@ -58,6 +58,14 @@ Zen Logic file manager
         nargs='*',
         help='list of folder ids to merge')
 
+    cmd = sub.add_parser(
+        'purge',
+        help='purge folders (delete files and remove from database)')
+    cmd.add_argument(
+        'folders',
+        nargs='*',
+        help='list of folder ids to merge')
+    
     
     args = parser.parse_args()
     
