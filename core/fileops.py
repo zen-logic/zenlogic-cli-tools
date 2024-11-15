@@ -150,8 +150,8 @@ class FileOps(object):
         # delete physical files and folders
         for folder in folders:
             path = self.get_folder_path(folder, root=root, mount=mount)
-            print(path)
-            # shutil.rmtree(path)
+            print(f'deleting: {path}')
+            shutil.rmtree(path)
         
         # collect all the folders we are have removed
         for folder in folders:
