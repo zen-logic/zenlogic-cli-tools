@@ -1,4 +1,6 @@
 import os, sys, hashlib
+import socket
+from contextlib import closing
 
 
 def bytes_to_readable(num, suffix="B"):
@@ -17,3 +19,10 @@ def get_file_hash(file_path):
         digest = None
         
     return digest
+
+
+def get_free_port():
+    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
+        s.bind(('', 0))
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        return s.getsockname()[1]
