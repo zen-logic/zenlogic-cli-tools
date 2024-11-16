@@ -51,7 +51,14 @@ class FileOps(object):
 
         if os.path.exists(dst) and os.path.isdir(dst):
             if os.path.exists(file_path):
-                shutil.copy2(file_path, dst)
+                basename = os.path.basename(file_path)
+                dst_file = os.path.join(dst, basename)
+                idx = 1
+                while os.path.exists(dst_file):
+                    # create new name
+                    idx += 1
+                    dst_file = os.path.join(dst, f'{basename} ({idx})')
+                shutil.copy2(file_path, dst_file)
             else:
                 return f'File not found:\n\t{file_path}'
         else:
@@ -85,11 +92,20 @@ class FileOps(object):
     
     def merge_folders(self, *folders, dst='./', root=None, mount=None):
         if os.path.exists(dst) and os.path.isdir(dst):
+            if dst.endswith('/'):
+                dst = dst[:-1]
             copy_errors = []
             file_paths = self.get_file_paths_from_folders(*folders, root=root, mount=mount)
             for file_path in file_paths:
                 if os.path.exists(file_path):
-                    shutil.copy2(file_path, dst)
+                    basename = os.path.basename(file_path)
+                    dst_file = os.path.join(dst, basename)
+                    idx = 1
+                    while os.path.exists(dst_file):
+                        # create new name
+                        idx += 1
+                        dst_file = os.path.join(dst, f'{basename} ({idx})')
+                    shutil.copy2(file_path, dst_file)
                 else:
                     copy_errors.append(file_path)
             if len(copy_errors) > 0:
@@ -134,8 +150,17 @@ class FileOps(object):
             for file_path in file_paths:
                 print(f'Copying: {file_path}')
                 if os.path.exists(file_path):
+
+                    basename = os.path.basename(file_path)
+                    dst_file = os.path.join(dst, basename)
+                    idx = 1
+                    while os.path.exists(dst_file):
+                        # create new name
+                        idx += 1
+                        dst_file = os.path.join(dst, f'{basename} ({idx})')
+                    
                     try:
-                        shutil.copy2(file_path, dst_path)
+                        shutil.copy2(file_path, dst_file)
                     except OSError as error:
                         print(error)
                 else:
