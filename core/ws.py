@@ -16,7 +16,6 @@ class MessageServer(object):
 
     async def cleanup(self):
         print('message server shutting down...')
-        pass
         
 
     async def handler(self, websocket):
@@ -47,7 +46,7 @@ class MessageServer(object):
         if self.port:
             port = self.port
         else:
-            port = 8081
+            port = 8090
 
         loop = asyncio.get_running_loop()
         stop = loop.create_future()
