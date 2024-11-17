@@ -57,7 +57,7 @@ class FileHunter(object):
             url = f'http://localhost:{port}'
             webbrowser.open(url)
 
-        self.run_background_process('core.ws')
+        self.run_background_process('core.ws', '8090')
             
         # workers = (multiprocessing.cpu_count() * 2) + 1
         workers = 4
