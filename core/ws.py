@@ -1,19 +1,28 @@
-import asyncio, json, uuid
+import asyncio, json, uuid, sys, signal
 from websockets.asyncio.server import serve
 from websockets.exceptions import ConnectionClosed
+import core.util
 
 
 class MessageServer(object):
 
     
-    def __init__(self):
+    def __init__(self, port=None):
+        self.port = port
+        print('message server started.')
         self.connected = {}
         asyncio.run(self.main())
+
+
+    async def cleanup(self):
+        print('message server shutting down...')
+        pass
         
 
     async def handler(self, websocket):
         uid = str(uuid.uuid4())
         print(f'new connection: {uid}')
+        
         self.connected[uid] = websocket
         data = json.dumps({'id': uid})
         message = await websocket.send(data)
@@ -35,10 +44,30 @@ class MessageServer(object):
             
 
     async def main(self):
-        async with serve(self.handler, "", 8001):
-            await asyncio.get_running_loop().create_future()  # run forever
+        if self.port:
+            port = self.port
+        else:
+            port = 8081
 
+        loop = asyncio.get_running_loop()
+        stop = loop.create_future()
+        loop.add_signal_handler(signal.SIGINT, stop.set_result, None)
+        loop.add_signal_handler(signal.SIGTERM, stop.set_result, None)
 
+        async with serve(self.handler, "", port):
+            await stop
+            await self.cleanup()
+
+            
 if __name__ == "__main__":
-    MessageServer()
+
+    port = None
+    
+    if len(sys.argv) > 1:
+        port = sys.argv[1]
+
+    MessageServer(port=port)
+    
+
+
     

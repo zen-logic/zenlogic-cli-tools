@@ -11,7 +11,7 @@ from config.settings import System
 
 
 class ZenServer(gunicorn.app.base.BaseApplication):
-    # modified from https://docs.gunicorn.org/en/stable/custom.html
+    # based on https://docs.gunicorn.org/en/stable/custom.html
     def __init__(self, app, options=None):
         self.options = options or {}
         self.application = app
@@ -57,6 +57,7 @@ class FileHunter(object):
             url = f'http://localhost:{port}'
             webbrowser.open(url)
 
+        self.run_background_process('core.ws')
             
         # workers = (multiprocessing.cpu_count() * 2) + 1
         workers = 4
