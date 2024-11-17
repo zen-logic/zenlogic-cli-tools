@@ -42,6 +42,25 @@ CREATE TABLE IF NOT EXISTS roots (
 );
 
 
+-- Table: processes
+CREATE TABLE IF NOT EXISTS processes (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    pid         INTEGER,
+    name        VARCHAR(100),
+    description VARCHAR(400)
+);
+
+-- Index: pid
+CREATE INDEX IF NOT EXISTS pid ON processes (
+    "pid"
+);
+
+-- Index: name
+CREATE INDEX IF NOT EXISTS name ON processes (
+    "name"
+);
+
+
 -- Index: ext
 CREATE INDEX IF NOT EXISTS ext ON items (
     "ext"

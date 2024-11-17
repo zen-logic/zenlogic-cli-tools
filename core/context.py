@@ -58,6 +58,7 @@ class Context(object):
         
 
     def log(self, message, newline = True):
+        return
         if newline:
             print(str(message))
         else:

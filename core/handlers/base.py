@@ -6,6 +6,7 @@ class BaseHandler(object):
     def __init__(self, application):
         self.app = application
         self.context = self.app.context
+        self.owner = self.app.owner
         self.last_handler = False
         self.f = None
         self.path = self.context.path.split('/')

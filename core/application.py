@@ -15,8 +15,9 @@ def match_handlers(uri, handlers):
 
 class Application(object):
         
-    def __init__(self, context):
+    def __init__(self, context, owner):
         self.context = context
+        self.owner = owner
         self.db = None
         self.context.log('Application created')
         self.context.log('Serving: %s (%s)' % (self.context.path, self.context.method))

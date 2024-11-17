@@ -3,12 +3,12 @@
 
 	<head>
         <meta charset="utf-8">
-		<title>Zen Logic - File Hunter</title>
+		<title>{title}</title>
 		<link rel="stylesheet" type="text/css" href="css/core.css">
 	</head>
 
 	<body>
-		Here
+		{call test here is some content}
 	</body>
 	
 </html>
