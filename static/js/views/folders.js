@@ -53,11 +53,11 @@ export class Folders {
 
 
 	selectFile (item) {
-		
+		this.app.info.showFile(item);
 	}
 
 	selectFolder (item) {
-		
+		this.app.info.showFolder(item);
 	}
 
 	

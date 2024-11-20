@@ -5,6 +5,7 @@ import {Files} from './views/files.js';
 import {Breadcrumb} from './views/breadcrumb.js';
 import {Stats} from './views/stats.js';
 import {Search} from './views/search.js';
+import {Info} from './views/info.js';
 
 (() => {
 
@@ -78,6 +79,10 @@ import {Search} from './views/search.js';
 			
 			this.search = new Search(
 				this, zen.dom.getElement('#search')
+			);
+
+			this.info = new Info(
+				this, zen.dom.getElement('.list-panel.item-info')
 			);
 			
 		},

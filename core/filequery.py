@@ -355,7 +355,10 @@ class FileQuery(object):
 
     def get_folder(self, folder_id):
         sql = """
-        SELECT * FROM `folders` WHERE `id` = %s
+        SELECT 'folder' AS `type`, f.*, r.name AS `rootname`, r.path AS `rootpath`
+        FROM `folders` f
+            LEFT JOIN `roots` r ON f.root = r.id
+        WHERE f.`id` = %s
         """
         item = self.db.get_record(sql, (folder_id, ))
         if item:
@@ -366,8 +369,15 @@ class FileQuery(object):
 
     def get_item(self, item_id):
         sql = """
-        SELECT * FROM `items` WHERE `id` = %s
+            SELECT f1.*, f2.fullpath, r.name AS `rootname`, r.path AS `rootpath`
+            FROM `items` f1
+                LEFT JOIN `folders` f2 ON f1.folder = f2.id
+                LEFT JOIN `roots` r ON f1.root = r.id
+            WHERE f1.`id` = %s
         """
+        # sql = """
+        # SELECT * FROM `items` WHERE `id` = %s
+        # """
         item = self.db.get_record(sql, (item_id, ))
         if item:
             return dict(item)

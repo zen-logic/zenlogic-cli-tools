@@ -30,6 +30,7 @@ System = {
 	["^/data/folders","app.handlers.data.folders", "FoldersHandler"],
 	["^/data/search","app.handlers.data.search", "SearchHandler"],
 	["^/data/stats","app.handlers.data.stats", "StatsHandler"],
+	["^/data/info","app.handlers.data.info", "InfoHandler"],
 	["^/","core.handlers.static", "StaticHandler"],
 	["^/","app.handlers.notfound", "NotFoundHandler"]
     ]
