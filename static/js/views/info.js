@@ -8,6 +8,10 @@ export class Info {
 		this.el = el;
 	}
 
+	reset () {
+		this.el.innerHTML = '';
+	}
+	
 	
 	populateFile (data) {
 		this.el.innerHTML = '';
@@ -43,12 +47,28 @@ export class Info {
 
 
 	populateFolder (data) {
-		console.log(data);
-		console.log(data.name);
-		console.log(data.fullpath);
-		console.log(data.rootname);
-		console.log(data.filecount);
-		console.log(data.foldercount);
+		this.el.innerHTML = '';
+
+		let item = zen.dom.createElement({parent: this.el, cls: 'info-item'});
+		zen.dom.createElement({parent: item, cls: 'label', content: 'Name'});
+		zen.dom.createElement({parent: item, content: data.name});
+		
+		item = zen.dom.createElement({parent: this.el, cls: 'info-item'});
+		zen.dom.createElement({parent: item, cls: 'label', content: 'Path'});
+		zen.dom.createElement({parent: item, content: data.fullpath.replace(data.name, '')});
+		
+		item = zen.dom.createElement({parent: this.el, cls: 'info-item'});
+		zen.dom.createElement({parent: item, cls: 'label', content: 'Storage'});
+		zen.dom.createElement({parent: item, content: data.rootname});
+
+		item = zen.dom.createElement({parent: this.el, cls: 'info-item'});
+		zen.dom.createElement({parent: item, cls: 'label', content: 'Files'});
+		zen.dom.createElement({parent: item, content: data.filecount});
+
+		item = zen.dom.createElement({parent: this.el, cls: 'info-item'});
+		zen.dom.createElement({parent: item, cls: 'label', content: 'Folders'});
+		zen.dom.createElement({parent: item, content: data.foldercount});
+
 	}
 
 	

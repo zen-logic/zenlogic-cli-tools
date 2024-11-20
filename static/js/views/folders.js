@@ -65,6 +65,7 @@ export class Folders {
 		this.app.search.search.value = '';
 		
 		if (item.classList.contains('selected') && item.dataset.type === 'folder') {
+			this.app.info.reset();
 			this.getFolder(item);
 		} else {
 			let sel = `:scope *[data-id="${item.dataset.id}"][data-type="${item.dataset.type}"]`;
