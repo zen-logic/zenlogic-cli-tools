@@ -1,0 +1,17 @@
+<!-- Tool bar -->
+<div class="tool-bar">
+	<div style="flex: 1;"></div>
+	<form id="search">
+		<input type="search" name="search" placeholder="Search...">
+		<select name="search-type" value="files">
+			<option value="files">Files</option>
+			<option value="folders">Folders</option>
+			<option value="both">Both</option>
+		</select>
+		<select name="match-type" value="contains">
+			<option value="contains">Contains</option>
+			<option value="start">Starts with</option>
+			<option value="exact">Exact match</option>
+		</select>
+	</form>
+</div> <!-- end: Tool bar -->

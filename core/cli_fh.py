@@ -1,7 +1,7 @@
 import os, sys, pathlib, json
-from cli_base import BaseCLI
-from filescan import FileScan
-from filequery import FileQuery
+from .cli_base import BaseCLI
+from .filescan import FileScan
+from .filequery import FileQuery
 
 
 class CLI(BaseCLI):

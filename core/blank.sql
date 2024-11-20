@@ -78,6 +78,11 @@ CREATE INDEX IF NOT EXISTS fullpath ON folders (
     "fullpath"
 );
 
+-- Index: parent
+CREATE INDEX IF NOT EXISTS parent ON folders (
+    "parent"
+);
+
 
 -- Index: hash
 CREATE INDEX IF NOT EXISTS hash ON items (

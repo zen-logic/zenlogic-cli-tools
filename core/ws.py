@@ -9,10 +9,31 @@ class MessageServer(object):
     
     def __init__(self, port=None):
         self.port = port
-        print('message server started.')
         self.connected = {}
+        self.subscribed = []
         asyncio.run(self.main())
 
+
+    async def process_message(self, uid, message):
+        if 'action' in message:
+            message_handler = getattr(self, message['action'], None)
+            if message_handler:
+                await message_handler(uid, message)
+
+
+    async def subscribe(self, uid, message):
+        self.subscribed.append(uid)
+        await self.send_data(uid, {'status': 'OK'})
+
+
+    async def send_data(self, uid, data):
+        await self.connected[uid].send(json.dumps(data))
+
+
+    async def broadcast(self, uid, data):
+        for uid in self.subscribed:
+            await self.send_data(uid, data)
+        
 
     async def cleanup(self):
         print('message server shutting down...')
@@ -30,7 +51,9 @@ class MessageServer(object):
             while True:
                 try:
                     message = await websocket.recv()
-                    print(uid, json.loads(message))
+                    data = json.loads(message)
+                    print(uid, data)
+                    await self.process_message(uid, data)
                 except ConnectionClosed as e:
                     print(e)
                     print(f'removing connection: {uid}')
@@ -48,6 +71,8 @@ class MessageServer(object):
         else:
             port = 8090
 
+        print(f'Message server starting on port {port}...')
+            
         loop = asyncio.get_running_loop()
         stop = loop.create_future()
         loop.add_signal_handler(signal.SIGINT, stop.set_result, None)

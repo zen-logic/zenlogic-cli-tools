@@ -3,13 +3,14 @@
 :root {
 	--bg: #e0efff;
     --default: #394253;
-    --outline: #777;
+	--panel: #0C5BAD;
+    --outline: #aac;
 	--shadow: 0px 0px 4px 1px rgba(0,0,0,0.3);
 	--active-window: #e0efff;
 	--inactive-window: #eee;
 	--stripe: #e0efffaa;
-	--highlight: rgba(80,140,240,1);
-	--select: rgba(140,200,250,1);
+	--highlight: rgba(140,200,250,1);
+	--select: rgba(80,140,240,1);
     --ok: #32AB39;
     --error: #B21322;
     --amber: #F8A12F;
@@ -30,8 +31,8 @@
     --brand-9: #C1C1C1;
     --brand-10:#606070;
 	--lighter: rgba(255,255,255,.07);
-	--shade: rgba(0,0,0,.2);
-	--darker: rgba(0,0,0,.5);
+	--shade: rgba(0,0,0,.05);
+	--darker: rgba(0,0,0,.2);
 }
 
 
@@ -50,6 +51,9 @@ body {
 	overscroll-behavior: none;
 }
 
+.ui-container * {
+	margin: 0;
+}
 
 *::-webkit-scrollbar {
 	width: 6px;

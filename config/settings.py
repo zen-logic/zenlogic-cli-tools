@@ -26,6 +26,10 @@ System = {
     "handlers": [
 	["^/$","app.handlers.main", "MainHandler"], # default page
 	["(\.css|\.js|\.html)$","app.handlers.default", "DefaultHandler"], # text type files
+	["^/data/roots","app.handlers.data.roots", "StorageRootsHandler"],
+	["^/data/folders","app.handlers.data.folders", "FoldersHandler"],
+	["^/data/search","app.handlers.data.search", "SearchHandler"],
+	["^/data/stats","app.handlers.data.stats", "StatsHandler"],
 	["^/","core.handlers.static", "StaticHandler"],
 	["^/","app.handlers.notfound", "NotFoundHandler"]
     ]

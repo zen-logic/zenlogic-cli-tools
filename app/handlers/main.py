@@ -8,22 +8,16 @@ class MainHandler(BaseHandler):
 
     def get(self):
         self.context.set_header('Content-type', 'text/html')
-        template = TemplateCompiler(template='pages/home',
+        template = TemplateCompiler(template='pages/main',
                                     root=System['templates'],
                                     handler=self)
-        
 
-        # self.owner.run_background_process('app.test',
-        #                                   'application test process',
-        #                                   description='Test process')
-        
         self.context.write(template.render())
-        
         self.done()
 
-        
-    def test(self, *params):
-        return ' '.join(list(params))
+
+    def get_port(self, *params):
+        return self.owner.ws_port
         
             
 handler = MainHandler

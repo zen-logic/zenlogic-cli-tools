@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en-gb">
+
+	<head>
+        <meta charset="utf-8">
+		<title>{title}</title>
+		<link rel="stylesheet" type="text/css" href="css/core.css">
+		<link rel="stylesheet" type="text/css" href="css/ui.css">
+	</head>
+
+	<body>
+		<!-- UI container -->
+		<div class="ui-container">
+			
+			{insert components/menu-bar}
+
+			<!-- Layout section -->
+			<div class="main-layout">
+
+				<!-- Left panel -->
+				<div class="left-panel">
+					
+					<!-- Left top -->
+					<div class="left-top">
+						{insert components/storage-roots}
+					</div> <!-- end: Left top -->
+
+					<!-- Left bottom -->
+					<div class="left-bottom">
+						{insert components/activity-panel}
+					</div> <!-- end: Left bottom -->
+					
+				</div> <!-- end: Left panel -->
+
+				<!-- Primary panel -->
+				<div class="primary-panel">
+
+					{insert components/tool-bar}
+
+					{insert components/main-panel}
+
+					{insert components/breadcrumb}
+					
+				</div> <!-- end: Primary panel -->
+
+				<!-- Right panel -->
+				<div class="right-panel">
+					
+					<!-- Right top -->
+					<div class="right-top">
+						{insert components/item-info}
+					</div> <!-- end: Right top -->
+
+					<!-- Right bottom -->
+					<div class="right-bottom">
+						right bottom
+					</div> <!-- end: Right bottom -->
+					
+				</div> <!-- end: Right panel -->
+				
+			</div> <!-- end: Layout section -->
+
+			{insert components/status-bar}
+
+		</div> <!-- end: UI container -->
+		<script>var ws = {call get_port};</script>
+		<script src="js/app.js" type="module"></script>
+		
+	</body>
+	
+</html>

@@ -1,0 +1,307 @@
+
+/* Layout */
+.ui-container {
+	--header-height: 32px;
+	--footer-height: 24px;
+	--toolbar-height: 32px;
+	--breadcrumb-height: 32px;
+	--panel-header: 24px;
+	--panel-footer: 24px;
+	--padding: 6px;
+	--left-panel: 260px;
+	--right-panel: 260px;	
+	/* probably should do autosizing in a different way, but working as a quick and dirty approach */
+	--header-footer: calc( var( --header-height ) + var( --footer-height ) );
+	--main-panel: calc( 100vh - calc( var(--header-footer) + calc( var( --toolbar-height ) + var( --breadcrumb-height ) ) ));
+	--panel-list: calc( calc( calc( 100vh - var(--header-footer) ) / 2 ) - var(--panel-header) );
+	--panel-list-with-footer: calc( calc( calc( 100vh - var(--header-footer) ) / 2 ) - var(--panel-header) - var(--panel-footer) );
+
+	--main-width: calc( 100vw - var(--left-panel) - var(--right-panel) );
+	
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	width: 100vw;
+
+	font-size: 12px;
+	
+}
+
+.ui-container div {
+
+}
+
+.menu-bar {
+	height: var(--header-height);
+	display: flex;
+	background-color: #fff;
+	box-shadow: var(--shadow);
+	z-index: 2;
+	align-items: center;
+	padding: 0 4px;
+}
+
+.menu-bar img.logo {
+	height: 24px;
+}
+
+.status-bar {
+	z-index: 2;
+	height: var(--footer-height);
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	font-weight: bold;
+	padding-right: 12px;
+	box-shadow: var(--shadow);
+	background-color: #fff;
+}
+
+.main-layout {
+	flex: 1;
+	display: flex;
+	width: 100%;
+}
+
+.left-panel {
+	z-index: 1;
+	width: var(--left-panel);
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	box-shadow: var(--shadow);
+}
+
+.left-top {
+	flex: 1;
+	border-bottom: 1px solid var(--outline);
+}
+
+.left-bottom {
+	flex: 1;
+}
+
+.primary-panel {
+	z-index: 0;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.right-panel {
+	z-index: 1;
+	width: var(--right-panel);
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	box-shadow: var(--shadow);
+}
+
+.right-top {
+	flex: 1;
+	border-bottom: 1px solid var(--outline);
+}
+
+.right-bottom {
+	flex: 1;
+}
+
+.tool-bar {
+	height: var(--toolbar-height);
+	border-bottom: 1px solid var(--outline);
+	background-color: var(--shade);
+	display: flex;
+	align-items: center;
+	padding: 0 var(--padding);
+	gap: var(--padding);
+}
+
+.breadcrumb-container {
+	height: var(--breadcrumb-height);
+	width: var(--main-width);
+	overflow-x: auto;
+	overflow-y: hidden;
+	background-color: var(--panel);
+}
+
+.breadcrumb {
+	height: var(--breadcrumb-height);
+	display: flex;
+	align-items: center;
+	padding: 0 var(--padding);
+	gap: 6px;
+}
+
+.breadcrumb .item {
+	white-space: nowrap;
+	font-size: 80%;
+	background-color: var(--select);
+	color: #fff;
+	border-radius: 1em;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 2px 8px;
+	transition: background-color .2s ease-in-out, color .2s ease-in-out;
+	cursor: default;
+}
+
+.breadcrumb .results {
+	font-weight: bold;
+	color: #fff;
+}
+
+.breadcrumb .item:hover {
+	background-color: var(--highlight);
+	color: #000;
+}
+
+.main-panel {
+	flex: 1;
+}
+
+#main-panel {
+	/* max-height: calc(100vh - 244px); */
+	height: var(--main-panel);
+	width: var(--main-width);
+	max-height: var(--main-panel);
+	max-width: var(--main-width);
+	padding: var(--padding);
+	/* padding: var(--padding); */
+	overflow-y: auto;
+	overflow-x: auto;
+}
+
+.activity-panel {
+	height: 100%;
+	background-color: var(--shade);
+}
+
+
+.list-panel {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.list-panel .panel-header {
+	font-weight: bold;
+	height: var(--panel-header);
+	display: flex;
+	align-items: center;
+	padding-left: var(--padding);
+	background-color: var(--panel);
+	color: #fff;
+}
+
+.list-panel .panel-list-with-footer,
+.list-panel .panel-list {
+	flex: 1;
+}
+
+.list-panel .panel-footer {
+	display: flex;
+	align-items: center;
+	border-top: 1px solid var(--outline);
+	height: var(--panel-footer);
+	padding: 0 var(--padding);
+	background-color: var(--shade);
+}
+
+img.icon {
+	/* filter: invert(1) brightness(50%) sepia(100%) saturate(10000%) hue-rotate(130deg); */
+}
+
+.panel-list-with-footer {
+	padding: var(--padding);
+	max-height: var(--panel-list-with-footer);
+	overflow: auto;
+}
+
+.panel-list {
+	padding: var(--padding);
+	max-height: var(--panel-list);
+	overflow: auto;
+}
+
+.list-item {
+	padding: 2px var(--padding);
+	display: flex;
+	gap: var(--padding);
+	align-items: center;
+
+	border-radius: 3px;
+	transition: background-color .2s ease-in-out, color .2s ease-in-out;
+	cursor: default;
+}
+
+.list-item.selected {
+	background-color: var(--select);
+	color: #fff;
+}
+
+.list-item.selected img.icon {
+	filter: invert(1);
+}
+
+.list-item:not(.selected):hover {
+	background-color: var(--highlight);
+	color: #fff;
+}
+
+.list-item img {
+	height: 18px;
+	transition: filter .2s ease-in-out;
+}
+
+.list-item:not(.selected):hover img.icon {
+	filter: invert(1);
+	/* filter: invert(1) brightness(50%) sepia(100%) saturate(10000%) hue-rotate(130deg); */
+}
+
+#search {
+	display: flex;
+	gap: var(--padding);
+}
+
+.main-panel table {
+	border-collapse: collapse;
+}
+
+.main-panel table tr.header {
+	position: sticky;
+	top: -6px;
+	left: -6px;
+	padding: var(--padding);
+	background-color: var(--panel);
+	color: #fff;
+	box-shadow: var(--shadow);
+}
+
+.main-panel table tr:nth-child(even) {
+    background-color: var(--shade);
+}
+
+.main-panel table td {
+	padding: 3px;
+}
+
+.main-panel table th {
+	text-align: left;
+}
+
+.main-panel table tr {
+	border-radius: 3px;
+	transition: background-color .2s ease-in-out, color .2s ease-in-out;
+	cursor: default;
+}
+
+.main-panel table tr.selected {
+	background-color: var(--select);
+	color: #fff;
+}
+
+.main-panel table tr:not(.selected):hover {
+	background-color: var(--highlight);
+	color: #fff;
+}

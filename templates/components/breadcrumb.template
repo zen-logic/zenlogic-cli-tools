@@ -1,0 +1,5 @@
+<!-- Breadcrumb -->
+<div class="breadcrumb-container">
+	<div class="breadcrumb" id="breadcrumb">
+	</div> <!-- end: Breadcrumb -->
+</div>

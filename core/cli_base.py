@@ -1,5 +1,5 @@
 import os, sys, pathlib, json
-from db_sqlite import Database
+from .db_sqlite import Database
 
 
 def home_dir():

@@ -1,0 +1,15 @@
+<!-- Storage roots -->
+<div class="list-panel item-info">
+	
+	<div class="panel-header">
+		Item information
+	</div>
+	
+	<div class="panel-list" id="item-info">
+
+	</div>
+	
+	<!-- <div class="panel-footer">panel footer</div> -->
+	
+</div> <!-- end: Storage roots -->
+

@@ -1,6 +1,6 @@
 import os, sys, hashlib
 from datetime import datetime
-from util import *
+from .util import *
 
 
 class FileScan(object):

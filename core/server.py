@@ -31,8 +31,9 @@ class ZenServer(gunicorn.app.base.BaseApplication):
 
 class FileHunter(object):
 
-    def __init__(self, port=None):
+    def __init__(self, port=None, ws_port=None):
         self.port = port
+        self.ws_port = ws_port
         self.server = None
         self.info = None
         db_file = os.path.join(System['data'], 'fh.db')
@@ -54,25 +55,28 @@ class FileHunter(object):
 
         
         def ready(server):
-            url = f'http://localhost:{port}'
+            url = f'http://localhost:{self.port}'
             webbrowser.open(url)
 
-        self.run_background_process('core.ws', '8090')
             
         # workers = (multiprocessing.cpu_count() * 2) + 1
         workers = 4
         
-        if self.port:
-            port = self.port
-        else:
-            port = core.util.get_free_port()
+        if not self.port:
+            self.port = core.util.get_free_port()
+            
+        if not self.ws_port:
+            self.ws_port = core.util.get_free_port()
             
         options = {
-            'bind': '%s:%s' % ('127.0.0.1', port),
+            'bind': '%s:%s' % ('0.0.0.0', self.port),
             'workers': workers,
-            'when_ready': ready
+            'when_ready': ready,
+            'errorlog': '/dev/null'
         }
-        
+
+        self.run_background_process('core.ws', str(self.ws_port))
+        print(f'Running FileHunter server on port {self.port}...')
         self.server = ZenServer(run, options)
         self.server.run()
         

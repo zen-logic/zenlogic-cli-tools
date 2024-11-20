@@ -1,5 +1,5 @@
 import os, sys, pathlib, shutil
-from filequery import FileQuery
+from .filequery import FileQuery
 import pprint
 
 

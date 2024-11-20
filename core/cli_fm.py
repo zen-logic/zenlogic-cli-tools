@@ -1,5 +1,5 @@
-from cli_base import BaseCLI
-from fileops import FileOps
+from .cli_base import BaseCLI
+from .fileops import FileOps
 
 
 class CLI(BaseCLI):

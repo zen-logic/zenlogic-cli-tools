@@ -1,5 +1,5 @@
 import os
-from util import get_file_hash
+from .util import get_file_hash
 
 
 class FileQuery(object):
@@ -65,21 +65,33 @@ class FileQuery(object):
                        start=False,
                        end=False,
                        case_insensitive=False):
+        escape = False
         items = []
         sql = """
-        SELECT f1.*, f2.fullpath, r.name AS `rootname`, r.path AS `rootpath`
+        SELECT 'file' AS `type`, f1.*, f2.fullpath, r.name AS `rootname`, r.path AS `rootpath`
         FROM `items` f1
             LEFT JOIN `folders` f2 ON f1.folder = f2.id
             LEFT JOIN `roots` r ON f1.root = r.id
         """
         if partial:
             sql += " WHERE f1.`name` LIKE %s"
+
+            for char in ['_', '%']:
+                if char in filename:
+                    escape = '\\'
+                    filename = filename.replace(char, f'\\{char}')
+
+            if escape != False:
+                escape = '\\'
+                sql += f" ESCAPE '{escape}'"
+                
             if start:
                 filename = f'{filename}%'
             elif end:
                 filename = f'%{filename}'
             else:
                 filename = f'%{filename}%'
+                
         else:
             sql += " WHERE f1.`name` = %s"
 
@@ -100,7 +112,7 @@ class FileQuery(object):
                          case_insensitive=False):
         items = []
         sql = """
-        SELECT f.*, r.name AS `rootname`, r.path AS `rootpath`
+        SELECT 'folder' AS `type`, f.*, r.name AS `rootname`, r.path AS `rootpath`
         FROM `folders` f
             LEFT JOIN `roots` r ON f.root = r.id
         """
@@ -360,24 +372,21 @@ class FileQuery(object):
     
     def get_root(self, root_id):
         items = []
-        sql = "SELECT * FROM `folders` WHERE `root` = %s AND `parent` IS NULL"
+        sql = "SELECT * FROM `folders` WHERE `root` = %s AND `parent` IS NULL ORDER BY `name`"
         folders = self.db.get_records(sql, (root_id,))
         for folder in folders:
-            items.append({
-                'type': 'folder',
-                'id': folder['id'],
-                'name': folder['name']
-            })
-        
-        sql = "SELECT * FROM `items` WHERE `root` = %s AND `folder` IS NULL"
+            folder = dict(folder)
+            folder['type'] = 'folder'
+            folder['path'] = folder['fullpath']
+            items.append(folder)
+            
+        sql = "SELECT * FROM `items` WHERE `root` = %s AND `folder` IS NULL ORDER BY `name`"
         files = self.db.get_records(sql, (root_id,))
         for item in files:
-            items.append({
-                'type': 'file',
-                'id': item['id'],
-                'name': item['name']
-            })
-
+            item = dict(item)
+            item['type'] = 'file'
+            items.append(item);
+            
         return items
 
 
@@ -388,6 +397,7 @@ class FileQuery(object):
         for folder in folders:
             folder = dict(folder)
             folder['type'] = 'folder'
+            folder['path'] = folder['fullpath']
             items.append(folder)
         
         sql = "SELECT * FROM `items` WHERE `folder` = %s"
@@ -423,3 +433,19 @@ class FileQuery(object):
                     children.append(dict(f))
                 
         return tree
+
+
+    def get_stats(self):
+        sql = """
+        SELECT  (
+            SELECT COUNT(*)
+            FROM   `folders`
+            ) AS `folders`,
+            (
+            SELECT COUNT(*)
+            FROM   `items`
+            ) AS `files`
+        """
+        stats = self.db.get_record(sql, None)
+        return dict(stats)
+    
