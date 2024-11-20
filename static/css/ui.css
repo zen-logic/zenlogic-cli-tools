@@ -206,6 +206,12 @@
 	height: var(--panel-footer);
 	padding: 0 var(--padding);
 	background-color: var(--shade);
+	gap: var(--padding);
+	justify-content: flex-end;
+}
+
+.list-panel .panel-footer img {
+	height: 18px;
 }
 
 img.icon {

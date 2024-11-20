@@ -9,7 +9,10 @@
 
 	</div>
 	
-	<div class="panel-footer">panel footer</div>
+	<div class="panel-footer">
+		<img src="img/ionicons/sync.svg" />
+		<img src="img/feather/plus.svg" />
+	</div>
 	
 </div> <!-- end: Storage roots -->
 

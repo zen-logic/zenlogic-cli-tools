@@ -1,5 +1,14 @@
-<!-- Activity panel -->
-<div class="activity-panel">
-	activity panel
-</div> <!-- end: Activity panel -->
+<!-- Item info -->
+<div class="list-panel item-info">
+	
+	<div class="panel-header">
+		Activity
+	</div>
+	
+	<div class="panel-list activity-panel" id="activity-panel">
+		
+	</div>
+	
+</div> <!-- end: Item info -->
+
 

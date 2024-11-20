@@ -29,9 +29,23 @@ export class Search {
 	}
 	
 	selectItem (row) {
-		this.deselect();
-		row.classList.add('selected');
-		console.log(row.item);
+		if (row.classList.contains('selected')) {
+			this.app.breadcrumb.setFolder(row.item);
+		} else {
+			this.deselect();
+			row.classList.add('selected');
+			console.log(row.item);
+			row.dataset.id = row.item.id;
+			switch(row.item.type) {
+			case 'folder':
+				this.app.info.showFolder(row);
+				break;
+			case 'file':
+				this.app.info.showFile(row);
+				break;
+			}
+		}
+		
 	}
 	
 	
@@ -86,6 +100,8 @@ export class Search {
 			const panel = zen.dom.getElement('#main-panel');
 			panel.innerHTML = '';
 			this.app.deselectAll();
+			this.app.info.reset();
+			
 			try {
 				const request = new Request(this.endpoint, {
 					method: "POST",

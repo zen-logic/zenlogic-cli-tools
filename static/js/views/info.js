@@ -54,13 +54,13 @@ export class Info {
 		zen.dom.createElement({parent: item, content: data.name});
 		
 		item = zen.dom.createElement({parent: this.el, cls: 'info-item'});
-		zen.dom.createElement({parent: item, cls: 'label', content: 'Path'});
-		zen.dom.createElement({parent: item, content: data.fullpath.replace(data.name, '')});
-		
-		item = zen.dom.createElement({parent: this.el, cls: 'info-item'});
 		zen.dom.createElement({parent: item, cls: 'label', content: 'Storage'});
 		zen.dom.createElement({parent: item, content: data.rootname});
 
+		item = zen.dom.createElement({parent: this.el, cls: 'info-item'});
+		zen.dom.createElement({parent: item, cls: 'label', content: 'Path'});
+		zen.dom.createElement({parent: item, content: data.fullpath.replace(data.name, '')});
+		
 		item = zen.dom.createElement({parent: this.el, cls: 'info-item'});
 		zen.dom.createElement({parent: item, cls: 'label', content: 'Files'});
 		zen.dom.createElement({parent: item, content: data.filecount});

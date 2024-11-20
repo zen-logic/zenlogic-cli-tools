@@ -464,3 +464,21 @@ class FileQuery(object):
         stats = self.db.get_record(sql, None)
         return dict(stats)
     
+
+    def get_path(self, folder_id):
+        path = []
+        sql = "SELECT * FROM `folders` WHERE `id` = %s"
+        folder = self.db.get_record(sql, (folder_id,))
+        path.append(dict(folder))
+
+        while folder['parent'] != None:
+            folder = self.db.get_record(sql, (folder['parent'],))
+            path.append(dict(folder))
+
+        sql = "SELECT * FROM `roots` WHERE `id` = %s"
+        root = self.db.get_record(sql, (folder['root'],))
+            
+        path.append(dict(root))
+        path.reverse()
+        return path
+    
