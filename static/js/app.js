@@ -82,7 +82,7 @@ import {Info} from './views/info.js';
 			);
 
 			this.info = new Info(
-				this, zen.dom.getElement('.list-panel.item-info')
+				this, zen.dom.getElement('#item-info')
 			);
 			
 		},

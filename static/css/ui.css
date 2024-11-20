@@ -9,7 +9,7 @@
 	--panel-footer: 24px;
 	--padding: 6px;
 	--left-panel: 260px;
-	--right-panel: 260px;	
+	--right-panel: 300px;	
 	/* probably should do autosizing in a different way, but working as a quick and dirty approach */
 	--header-footer: calc( var( --header-height ) + var( --footer-height ) );
 	--main-panel: calc( 100vh - calc( var(--header-footer) + calc( var( --toolbar-height ) + var( --breadcrumb-height ) ) ));
@@ -326,4 +326,16 @@ img.icon {
 
 .offline {
 	background-color: var(--error);
+}
+
+.info-item {
+	padding: 2px var(--padding);
+	display: flex;
+	gap: var(--padding);
+	align-items: center;
+}
+
+.info-item .label {
+	font-weight: bold;
+	width: 60px;
 }
