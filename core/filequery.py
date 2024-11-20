@@ -13,7 +13,12 @@ class FileQuery(object):
         sql = "SELECT * FROM `roots`"
         roots = self.db.get_records(sql, None)
         for root in roots:
-            items.append(dict(root))
+            root = dict(root)
+            if os.path.exists(root['path']):
+                root['status'] = 'online'
+            else:
+                root['status'] = 'offline'
+            items.append(root)
         return items
 
 

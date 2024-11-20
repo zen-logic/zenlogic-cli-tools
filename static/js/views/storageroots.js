@@ -42,6 +42,15 @@ export class StorageRoots {
 				tag: 'span',
 				content: o.name
 			});
+
+			zen.dom.createElement({parent: item, cls: 'spacer'});
+			
+			zen.dom.createElement({
+				parent: item,
+				tag: 'span',
+				cls: o.status,
+				content: o.status
+			});
 			
 			item.addEventListener('click', ev => {
 				this.selectRoot(item);

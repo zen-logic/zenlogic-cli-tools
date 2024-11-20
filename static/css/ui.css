@@ -305,3 +305,25 @@ img.icon {
 	background-color: var(--highlight);
 	color: #fff;
 }
+
+.spacer {
+	flex: 1;
+}
+
+.online, .offline {
+	font-size: 80%;
+	color: #fff;
+	border-radius: 1em;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 2px 8px;
+}
+
+.online {
+	background-color: var(--ok);
+}
+
+.offline {
+	background-color: var(--error);
+}
