@@ -97,7 +97,29 @@ import {Actions} from './views/actions.js';
 			this.storageRoots.deselect();
 			this.folders.deselect();
 			this.breadcrumb.reset();
+		},
+
+
+		createProcess: async function (endpoint, params) {
+			
+			try {
+				const request = new Request(endpoint, {
+					method: "POST",
+					body: JSON.stringify(params)
+				});
+				const response = await fetch(request);
+				if (!response.ok) {
+					throw new Error(`Response status: ${response.status}`);
+				}
+				const data = await response.json();
+				console.log(data);
+			} catch (error) {
+				console.error(error);
+			}
+			
 		}
+
+		
 		
 	};
 

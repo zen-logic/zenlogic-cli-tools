@@ -34,6 +34,7 @@ System = {
 	["^/data/path","app.handlers.data.path", "PathHandler"],
 	["^/actions/test","app.handlers.actions.test", "TestActionHandler"],
 	["^/actions/folder","app.handlers.actions.open_folder", "OpenFolderHandler"],
+	["^/actions/scan","app.handlers.actions.scan", "FileScanHandler"],
 	["^/","core.handlers.static", "StaticHandler"],
 	["^/","app.handlers.notfound", "NotFoundHandler"]
     ]

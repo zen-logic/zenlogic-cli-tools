@@ -336,7 +336,7 @@ img.icon {
 	flex: 1;
 }
 
-.online, .offline {
+.online, .offline, .busy {
 	font-size: 80%;
 	color: #fff;
 	border-radius: 1em;
@@ -352,6 +352,10 @@ img.icon {
 
 .offline {
 	background-color: var(--error);
+}
+
+.busy {
+	background-color: var(--amber);
 }
 
 .info-item {

@@ -10,7 +10,7 @@ class MessageServer(object):
     def __init__(self, port=None):
         self.port = port
         self.connected = {}
-        self.subscribed = []
+        self.subscribed = set()
         asyncio.run(self.main())
 
 
@@ -22,7 +22,7 @@ class MessageServer(object):
 
 
     async def subscribe(self, uid, message):
-        self.subscribed.append(uid)
+        self.subscribed.add(uid)
         await self.send_data(uid, {'status': 'OK'})
 
 
@@ -32,6 +32,7 @@ class MessageServer(object):
 
     async def broadcast(self, uid, data):
         for uid in self.subscribed:
+            del data['action']
             await self.send_data(uid, data)
         
 
@@ -58,11 +59,13 @@ class MessageServer(object):
                     print(e)
                     print(f'removing connection: {uid}')
                     del self.connected[uid]
+                    self.subscribed.remove(uid)
                     break
         finally:
             if uid in self.connected:
                 print(f'removing connection: {uid}')
                 del self.connected[uid]
+                self.subscribed.remove(uid)
             
 
     async def main(self):

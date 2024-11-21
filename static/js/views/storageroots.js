@@ -5,6 +5,7 @@ export class StorageRoots {
 	constructor (app, el) {
 		this.endpoint = 'data/roots';
 		this.app = app;
+		this.root = null;
 		this.el = el;
 		this.setup();
 		this.getRoots();
@@ -15,11 +16,31 @@ export class StorageRoots {
 		this.rescan = zen.dom.getElement('*[data-action="rescan"]');
 		this.addstorage = zen.dom.getElement('*[data-action="addstorage"]');
 		this.addstorage.classList.add('enabled');
+
+		if (this.rescan) {
+			this.rescan.addEventListener('click', ev => {
+				if (this.root && this.rescan.classList.contains('enabled')) {
+					this.runScan(this.root.item);
+				}
+			});
+		}
+		
+	}
+
+
+	runScan (root) {
+		let indicator = zen.dom.getElement(':scope .indicator', this.root);
+		indicator.classList.remove('online', 'offline');
+		indicator.classList.add('busy');
+		indicator.innerHTML = 'scanning';
+		this.rescan.classList.remove('enabled');
+		this.app.createProcess('actions/scan', {root: root.id});
 	}
 	
 
 	deselect () {
 		this.rescan.classList.remove('enabled');
+		this.root = null;
 		zen.dom.getElements(':scope>div', this.el).forEach(el => {
 			el.classList.remove('selected');
 		});
@@ -38,7 +59,7 @@ export class StorageRoots {
 			item.dataset.id = o.id;
 			item.dataset.path = o.path;
 			item.dataset.name = o.name;
-			item.item = 0;
+			item.item = o;
 			
 			const icon = zen.dom.createElement({
 				parent: item,
@@ -58,7 +79,7 @@ export class StorageRoots {
 			zen.dom.createElement({
 				parent: item,
 				tag: 'span',
-				cls: o.status,
+				cls: ['indicator', o.status],
 				content: o.status
 			});
 			
@@ -73,7 +94,9 @@ export class StorageRoots {
 		this.app.search.search.value = '';
 		const selected = zen.dom.getElement(`:scope>div[data-id="${item.dataset.id}"]`, this.el);
 		this.deselect();
-		if (selected) selected.classList.add('selected');
+		if (selected) {
+			selected.classList.add('selected');
+		}
 		this.app.breadcrumb.setRoot(item);
 		const url = `${this.endpoint}/${item.dataset.id}`;
 		try {
@@ -83,7 +106,12 @@ export class StorageRoots {
 			}
 			const data = await response.json();
 			this.app.folders.populateItems(data);
-			this.rescan.classList.add('enabled');
+			this.root = item;
+
+			let indicator = zen.dom.getElement(':scope .indicator', this.root);
+			if (indicator.classList.contains('online')) {
+				this.rescan.classList.add('enabled');
+			}
 		} catch (error) {
 			console.error(error.message);
 		}
