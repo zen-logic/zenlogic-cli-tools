@@ -7,7 +7,8 @@ from config.settings import System
 
 class ScanProcess(object):
 
-    def __init__(self, root_id, ws_port):
+    def __init__(self, root_id, ws_port, pid):
+        self.pid = pid
         self.root_id = root_id
         self.ws_port = ws_port
         db_file = os.path.join(System['data'], 'fh.db')
@@ -28,6 +29,7 @@ class ScanProcess(object):
     def update(self, message):
         data = {
             "action": "broadcast",
+            "pid": self.pid,
             "message": message
         }
         asyncio.run(send(json.dumps(data), port=self.ws_port))
@@ -37,4 +39,5 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         root_id = sys.argv[1]
         ws_port = sys.argv[2]
-        ScanProcess(root_id, ws_port).run()
+        pid = sys.argv[3]
+        ScanProcess(root_id, ws_port, pid).run()

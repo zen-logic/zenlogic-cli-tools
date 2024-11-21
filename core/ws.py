@@ -58,14 +58,16 @@ class MessageServer(object):
                 except ConnectionClosed as e:
                     print(e)
                     print(f'removing connection: {uid}')
+                    if uid in self.subscribed:
+                        self.subscribed.remove(uid)
                     del self.connected[uid]
-                    self.subscribed.remove(uid)
                     break
         finally:
             if uid in self.connected:
                 print(f'removing connection: {uid}')
+                if uid in self.subscribed:
+                    self.subscribed.remove(uid)
                 del self.connected[uid]
-                self.subscribed.remove(uid)
             
 
     async def main(self):

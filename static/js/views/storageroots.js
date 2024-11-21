@@ -34,7 +34,7 @@ export class StorageRoots {
 		indicator.classList.add('busy');
 		indicator.innerHTML = 'scanning';
 		this.rescan.classList.remove('enabled');
-		this.app.createProcess('actions/scan', {root: root.id});
+		this.app.createProcess('actions/scan', {root: root.id}, false);
 	}
 	
 
