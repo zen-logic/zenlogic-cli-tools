@@ -6,6 +6,7 @@ import {Breadcrumb} from './views/breadcrumb.js';
 import {Stats} from './views/stats.js';
 import {Search} from './views/search.js';
 import {Info} from './views/info.js';
+import {Actions} from './views/actions.js';
 
 (() => {
 
@@ -83,6 +84,10 @@ import {Info} from './views/info.js';
 
 			this.info = new Info(
 				this, zen.dom.getElement('#item-info')
+			);
+			
+			this.actions = new Actions(
+				this, zen.dom.getElement('#action-list')
 			);
 			
 		},

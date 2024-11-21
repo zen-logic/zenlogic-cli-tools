@@ -6,11 +6,20 @@ export class StorageRoots {
 		this.endpoint = 'data/roots';
 		this.app = app;
 		this.el = el;
+		this.setup();
 		this.getRoots();
 	}
 
 
+	setup () {
+		this.rescan = zen.dom.getElement('*[data-action="rescan"]');
+		this.addstorage = zen.dom.getElement('*[data-action="addstorage"]');
+		this.addstorage.classList.add('enabled');
+	}
+	
+
 	deselect () {
+		this.rescan.classList.remove('enabled');
 		zen.dom.getElements(':scope>div', this.el).forEach(el => {
 			el.classList.remove('selected');
 		});
@@ -29,7 +38,8 @@ export class StorageRoots {
 			item.dataset.id = o.id;
 			item.dataset.path = o.path;
 			item.dataset.name = o.name;
-
+			item.item = 0;
+			
 			const icon = zen.dom.createElement({
 				parent: item,
 				tag: 'img',
@@ -61,7 +71,6 @@ export class StorageRoots {
 	
 	async selectRoot (item) {
 		this.app.search.search.value = '';
-		
 		const selected = zen.dom.getElement(`:scope>div[data-id="${item.dataset.id}"]`, this.el);
 		this.deselect();
 		if (selected) selected.classList.add('selected');
@@ -74,6 +83,7 @@ export class StorageRoots {
 			}
 			const data = await response.json();
 			this.app.folders.populateItems(data);
+			this.rescan.classList.add('enabled');
 		} catch (error) {
 			console.error(error.message);
 		}
@@ -81,6 +91,7 @@ export class StorageRoots {
 	
 	
 	async getRoots () {
+		this.rescan.classList.remove('enabled');
 		try {
 			const response = await fetch(this.endpoint);
 			if (!response.ok) {

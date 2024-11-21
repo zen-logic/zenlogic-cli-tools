@@ -69,8 +69,12 @@ export class Breadcrumb {
 				});
 
 				button.addEventListener('click', ev => {
+					console.log(data[idx]);
 					this.app.storageRoots.selectRoot({
-						dataset: data[idx].id
+						dataset: {
+							id: data[idx].id,
+							name: data[idx].name
+						}
 					});
 				});
 			} else {
@@ -86,6 +90,7 @@ export class Breadcrumb {
 				button.dataset.name = data[idx].name;
 				last = button;
 				button.addEventListener('click', ev => {
+					console.log(data[idx]);
 					this.app.folders.getFolder(button);
 				});
 			}

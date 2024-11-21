@@ -1,5 +1,6 @@
 <!-- Tool bar -->
 <div class="tool-bar">
+	<!-- <img src="img/ionicons/git-merge-outline.svg" title="Add to merge" /> -->
 	<div style="flex: 1;"></div>
 	<form id="search">
 		<input type="search" name="search" placeholder="Search...">

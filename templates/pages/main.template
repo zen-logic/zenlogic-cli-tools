@@ -53,7 +53,7 @@
 
 					<!-- Right bottom -->
 					<div class="right-bottom">
-						right bottom
+						{insert components/action-panel}
 					</div> <!-- end: Right bottom -->
 					
 				</div> <!-- end: Right panel -->

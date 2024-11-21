@@ -51,7 +51,7 @@ class FileQuery(object):
     def find_hash(self, hash):
         items = []
         sql = """
-        SELECT f1.*, f2.fullpath, r.name AS `rootname`, r.path AS `rootpath`
+        SELECT 'file' AS `type`, f1.*, f2.fullpath, r.name AS `rootname`, r.path AS `rootpath`
         FROM `items` f1
             LEFT JOIN `folders` f2 ON f1.folder = f2.id
             LEFT JOIN `roots` r ON f1.root = r.id

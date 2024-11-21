@@ -10,8 +10,8 @@
 	</div>
 	
 	<div class="panel-footer">
-		<img src="img/ionicons/sync.svg" />
-		<img src="img/feather/plus.svg" />
+		<img data-action="rescan" src="img/ionicons/sync.svg" title="Re-scan storage" />
+		<img data-action="addstorage" src="img/feather/plus.svg" title="Add new storage" />
 	</div>
 	
 </div> <!-- end: Storage roots -->

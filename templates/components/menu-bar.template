@@ -1,4 +1,5 @@
 <!-- Menu bar -->
 <div class="menu-bar">
 	<img src="img/enso.png" class="logo" />
+	<div class="title">FileHunter</div>
 </div> <!-- end: Menu bar -->

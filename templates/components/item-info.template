@@ -1,15 +1,18 @@
-<!-- Storage roots -->
+<!-- Item info -->
 <div class="list-panel item-info">
 	
 	<div class="panel-header">
 		Item information
 	</div>
 	
-	<div class="panel-list" id="item-info">
+	<div class="panel-list-with-footer" id="item-info">
 
 	</div>
-	
-	<!-- <div class="panel-footer">panel footer</div> -->
-	
-</div> <!-- end: Storage roots -->
 
+	<div class="panel-footer" id="item-actions">
+		<img data-action="openfolder" src="img/feather/folder.svg" title="Show in file browser" />
+		<img data-action="flag" src="img/ionicons/flag-outline.svg" title="Flag folder" />
+		<img data-action="findhash" src="img/feather/search.svg" title="Find matching files" />
+	</div>
+	
+</div> <!-- end: Item info -->

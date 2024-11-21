@@ -1,6 +1,8 @@
 import os, sys, hashlib
 import socket
 from contextlib import closing
+import platform, subprocess
+from pathlib import Path
 
 
 def bytes_to_readable(num, suffix="B"):
@@ -26,3 +28,24 @@ def get_free_port():
         s.bind(('', 0))
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         return s.getsockname()[1]
+
+
+def is_windows():
+    return os.name in ['nt', 'ce']
+
+
+def is_macos() -> bool:
+    return "darwin" in platform.system().casefold()
+
+
+def open_folder(directory):
+    assert isinstance(directory, Path), "ERROR: Passed a non-Path to display_folder_in_wm()!"
+    assert directory.is_dir(), "ERROR! Passed a non-directory to display_folder_in_wm()!"
+    
+    if is_windows():
+        os.startfile(os.path.normpath(directory))
+    elif is_macos():
+        subprocess.run(['open', str(directory)])
+    else: # assume Linux or other POSIX-like
+        subprocess.run(['xdg-open', str(directory)])
+

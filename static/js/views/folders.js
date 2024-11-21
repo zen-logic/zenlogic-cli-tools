@@ -36,6 +36,7 @@ export class Folders {
 			const label = zen.dom.createElement({
 				parent: item,
 				tag: 'span',
+				cls: 'label',
 				content: o.name
 			});
 
@@ -43,6 +44,7 @@ export class Folders {
 			item.dataset.type = o.type;
 			item.dataset.path = o.path;
 			item.dataset.name = o.name;
+			item.item = o;
 			
 			item.addEventListener('click', ev => {
 				this.selectItem(item);

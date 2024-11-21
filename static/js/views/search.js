@@ -95,21 +95,32 @@ export class Search {
 	}
 
 	
-	async runSearch () {
-		if (this.search.value.length > 1) {
+	async runSearch (hash, callback) {
+		if (this.search.value.length > 1 || hash) {
+			let searchData;
 			const panel = zen.dom.getElement('#main-panel');
 			panel.innerHTML = '';
 			this.app.deselectAll();
 			this.app.info.reset();
+
+			if (hash) {
+				searchData = {
+					search: hash,
+					type: 'hash',
+					match: null
+				};
+			} else {
+				searchData = {
+					search: this.search.value,
+					type: this.searchType.value,
+					match: this.matchType.value
+				};
+			}
 			
 			try {
 				const request = new Request(this.endpoint, {
 					method: "POST",
-					body: JSON.stringify({
-						search: this.search.value,
-						type: this.searchType.value,
-						match: this.matchType.value
-					}),
+					body: JSON.stringify(searchData),
 				});
 				const response = await fetch(request);
 				if (!response.ok) {
@@ -117,6 +128,9 @@ export class Search {
 				}
 				const data = await response.json();
 				this.populateItems(data);
+				if (callback) {
+					callback(data);
+				}
 			} catch (error) {
 				console.error(error.message);
 			}

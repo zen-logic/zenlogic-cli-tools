@@ -1,0 +1,22 @@
+<!-- Compare -->
+<div class="list-panel actions-list">
+	
+	<!-- <div class="panel-header"> -->
+	<!-- 	<\!-- Process list -\-> -->
+	<!-- </div> -->
+	
+	<!-- <div class="panel-list-with-footer" id="compare-list"> -->
+	<div class="panel-list-no-header" id="action-list">
+		<!-- <div class="action-item"> -->
+		<!-- 	<h4>Hello</h4> -->
+		<!-- 	<p>this is an item</p> -->
+		<!-- </div> -->
+	</div>
+	
+	<!-- <div class="panel-footer"> -->
+	<!-- 	<\!-- <img data-action="merge" src="img/feather/git-merge.svg" title="Merge options" /> -\-> -->
+	<!-- </div> -->
+	
+</div> <!-- end: Item info -->
+
+

@@ -12,6 +12,9 @@ class SearchHandler(BaseHandler):
         query = FileQuery(self.owner.db)
 
         case_insensitive = True
+
+        if data['type'] == 'hash':
+            results += query.find_hash(data['search'])
         
         if data['type'] == 'folders' or data['type'] == 'both':
             if data['match'] == 'exact':

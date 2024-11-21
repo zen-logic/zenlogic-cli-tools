@@ -1,12 +1,8 @@
 <!-- Item info -->
 <div class="list-panel item-info">
 	
-	<div class="panel-header">
-		Activity
-	</div>
-	
-	<div class="panel-list activity-panel" id="activity-panel">
-		
+	<div class="panel-list-no-header activity-panel" id="activity-panel">
+		<div>no activity</div>
 	</div>
 	
 </div> <!-- end: Item info -->
