@@ -57,9 +57,9 @@ class ScanProcess(object):
         self.update({"info": {"detail": "Scan completed"}})
 
         
-    def update(self, data):
+    def update(self, data, immediate=False):
         current_time = int(time.perf_counter() * 1000)
-        if (current_time - self.last_update) > 250:
+        if ((current_time - self.last_update) > 250) or immediate == True:
             self.last_update = current_time
             data["pid"] = self.pid
             data["status"] = self.status

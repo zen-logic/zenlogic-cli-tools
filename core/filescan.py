@@ -21,7 +21,7 @@ class FileScan(object):
             print(message)
 
 
-    def notify(self):
+    def notify(self, immediate=False):
         if self.update:
             data = {
                 "info": {
@@ -33,15 +33,15 @@ class FileScan(object):
                     ]
                 }
             }
-            self.update(data)
+            self.update(data, immediate=immediate)
             
 
     def get_file_info(self, file_path):
         size = os.path.getsize(file_path)
-        if size > (1024**3):
+        if size > (100 * (1024 * 1024)):
             self.log(f'Large file ({bytes_to_readable(size)}): {file_path.split("/")[-1:][0]}')
             self.info = f'Large file ({bytes_to_readable(size)}): {file_path.split("/")[-1:][0]}'
-            self.notify()
+            self.notify(immediate=True)
 
         mtime = datetime.fromtimestamp(os.path.getctime(file_path))
         ctime = datetime.fromtimestamp(os.path.os.stat(file_path).st_birthtime)
@@ -92,22 +92,32 @@ class FileScan(object):
             file_info['folder'] = None
         file_info['root'] = self.root_id
 
-        if self.db.record_exists('items', [
-            {'field': 'root', 'value': self.root_id},
-            {'field': 'folder', 'value': file_info['folder']},
-            {'field': 'name', 'value': file_info['name']}
-        ]):
-            # we could check to update the file here?
-            self.log(f'Skipping: {"/".join(path)}')
-            self.info = f'Skipping: {file_info['name']}'
-            self.skip_count += 1
+        if file_info['folder']:
+            sql = "SELECT * FROM `items` WHERE `root` = %s AND `folder` = %s AND `name` = %s"
+            existing = self.db.get_record(sql, (self.root_id, file_info['folder'], file_info['name']))
+        else:
+            sql = "SELECT * FROM `items` WHERE `root` = %s AND `folder` IS NULL AND `name` = %s"
+            existing = self.db.get_record(sql, (self.root_id, file_info['name']))
+
+        if existing:
+            dt = datetime.fromtimestamp(existing['modified'])
+            if dt == file_info['modified']:
+                self.log(f'Skipping: {"/".join(path)}')
+                self.info = f'Skipping: {file_info['name']}'
+                self.skip_count += 1
+            else:
+                self.log(f'Modified file: {"/".join(path)}')
+                file_info['hash'] = get_file_hash(full_path)
+                self.info = f'Modified file: {file_info['name']}'
+                self.db.update_record('items', {'field': 'id', 'value': existing['id']}, file_info)
+                self.file_count += 1
         else:
             self.log(f'New file: {"/".join(path)}')
-            self.info = f'New file: {file_info['name']}'
-
             file_info['hash'] = get_file_hash(full_path)
+            self.info = f'New file: {file_info['name']}'
             self.db.add_record('items', file_info)
             self.file_count += 1
+            
         self.notify()
 
             
