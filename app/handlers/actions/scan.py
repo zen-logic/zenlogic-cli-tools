@@ -17,10 +17,11 @@ class FileScanHandler(BaseHandler):
         data = self.context.read_json_body()
         if 'root' in data:
             pid = data['pid']
+            description = data['description']
             root_id = str(data['root'])
             port = str(self.owner.ws_port)
-            self.owner.run_background_process('app.processors.storage_scan', root_id, port, pid)
-                
+            self.owner.run_background_process('app.processors.storage_scan', description, root_id, port, pid)
+            print('SCAN:',pid, root_id, port)
         self.context.write_json(response)
         self.done()
 

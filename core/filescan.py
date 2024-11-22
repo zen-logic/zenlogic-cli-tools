@@ -5,21 +5,44 @@ from .util import *
 
 class FileScan(object):
     
-    def __init__(self, db):
+    def __init__(self, db, update=None):
+        self.update = update
         self.verbose = False
         self.root = None
         self.db = db
-
+        self.skip_count = 0
+        self.file_count = 0
+        self.folder_count = 0
+        self.info = ''
+        
 
     def log(self, message):
         if self.verbose:
             print(message)
-        
+
+
+    def notify(self):
+        if self.update:
+            data = {
+                "info": {
+                    "detail": self.info,
+                    "stats": [
+                        {"label": "Skipped", "value": self.skip_count},
+                        {"label": "Files", "value": self.file_count},
+                        {"label": "Folders", "value": self.folder_count}
+                    ]
+                }
+            }
+            self.update(data)
+            
 
     def get_file_info(self, file_path):
         size = os.path.getsize(file_path)
         if size > (1024**3):
             self.log(f'Large file ({bytes_to_readable(size)}): {file_path.split("/")[-1:][0]}')
+            self.info = f'Large file ({bytes_to_readable(size)}): {file_path.split("/")[-1:][0]}'
+            self.notify()
+
         mtime = datetime.fromtimestamp(os.path.getctime(file_path))
         ctime = datetime.fromtimestamp(os.path.os.stat(file_path).st_birthtime)
         dummy, ext = os.path.splitext(file_path)
@@ -43,6 +66,7 @@ class FileScan(object):
                 parent_id = folder['id']
             else:
                 self.log(f'New folder: {folder_path}')
+                self.info = f'New folder: {item}'
                 
                 parent_id = self.db.add_record('folders', {
                     'parent': parent_id,
@@ -50,6 +74,8 @@ class FileScan(object):
                     'name': item,
                     'fullpath': folder_path
                 })
+            self.folder_count += 1
+        self.notify()
             
             
     def add_file(self, path):
@@ -73,10 +99,16 @@ class FileScan(object):
         ]):
             # we could check to update the file here?
             self.log(f'Skipping: {"/".join(path)}')
+            self.info = f'Skipping: {file_info['name']}'
+            self.skip_count += 1
         else:
             self.log(f'New file: {"/".join(path)}')
+            self.info = f'New file: {file_info['name']}'
+
             file_info['hash'] = get_file_hash(full_path)
             self.db.add_record('items', file_info)
+            self.file_count += 1
+        self.notify()
 
             
     def process_folder(self, path):
@@ -92,8 +124,9 @@ class FileScan(object):
                     self.add_file(item_path)
         except PermissionError:
             self.log(f'Permission error: {full_path}')
+            self.info = f'Permission error: {full_path}'
 
-        
+            
     def add_root(self, name, root):
         self.root = root
         sql = "SELECT * FROM `roots` WHERE `path` = %s"

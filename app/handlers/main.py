@@ -12,7 +12,7 @@ class MainHandler(BaseHandler):
                                     root=System['templates'],
                                     handler=self)
 
-        template.set_data('title', 'Zen Logic FileHunter')
+        template.data['title'] = 'Zen Logic FileHunter'
         self.context.write(template.render())
         self.done()
 

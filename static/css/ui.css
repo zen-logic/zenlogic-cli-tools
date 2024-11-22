@@ -15,7 +15,7 @@
 	--main-panel: calc( 100vh - calc( var(--header-footer) + calc( var( --toolbar-height ) + var( --breadcrumb-height ) ) ));
 	--panel-list: calc( calc( calc( 100vh - var(--header-footer) ) / 2 ) - var(--panel-header) );
 	--panel-list-with-footer: calc( calc( calc( 100vh - var(--header-footer) ) / 2 ) - var(--panel-header) - var(--panel-footer) );
-	--panel-list-no-header: calc( calc( calc( 100vh - var(--header-footer) ) / 2 ) );
+	--panel-list-no-header:  calc( calc( 100vh - var(--header-footer) ) / 2 );
 
 	--main-width: calc( 100vw - var(--left-panel) - var(--right-panel) );
 	
@@ -184,14 +184,60 @@
 }
 
 .activity-panel {
-	height: 100%;
-	/* background-color: var(--dark-bg); */
-	/* color: #fff; */
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	overflow-y: auto;
+	overflow-x: hidden;
+	height: var(--panel-list-no-header);
+	background-color: rgba(0, 0, 0, .2);
 }
 
+#activity-panel {
+	display: flex;
+	flex-direction: column;
+	margin: var(--padding);
+	gap: var(--padding);
+}
+
+.activity-panel .item {
+	border: 1px solid #bbd;
+	font-size: 80%;
+	background-color: #fff;
+	border-radius: 4px;
+	padding: var(--padding);
+
+	display: flex; flex-direction: column; gap: 6px;	
+}
+
+.activity-panel .item .header {
+	display: flex; justify-content: space-between; align-items: center;
+}
+
+.activity-panel .item .header .description {
+	font-weight: bold;
+}
+
+.activity-panel .item .header .status {
+	font-weight: bold; color: var(--ok);
+}
+
+.activity-panel .item .info {
+	display: flex; flex-direction: column; gap: 6px;
+}
+
+.activity-panel .item .detail {
+	color: #888;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.activity-panel .item .stats {
+	display: flex; gap: var(--padding); justify-content: flex-end;
+}
+
+
+#action-list .action-item>* {
+	margin-bottom: .3em;
+}
 
 .list-panel {
 	height: 100%;
@@ -385,7 +431,7 @@ img.icon {
 	margin: 0 calc( var(--padding) * 2 );
 	padding: var(--padding);
 	background-color: var(--amber);
-	border-radius: 6px;
+	border-radius: 4px;
 	color: #fff;
 }
 

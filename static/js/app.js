@@ -10,7 +10,6 @@ import {Actions} from './views/actions.js';
 import {Activity} from './views/activity.js';
 
 (() => {
-
 	
 	function App (params) {
 		if (arguments.length > 0) this.init(params);
@@ -22,7 +21,6 @@ import {Activity} from './views/activity.js';
 		
 		init: function (params) {
 			console.log('application loaded');
-			this.processes = {};
 			this.cfg = params;
 			this.setup();
 			return this;
@@ -36,8 +34,7 @@ import {Activity} from './views/activity.js';
 
 		
 		openWebSocket: function () {
-			const socketURL = `ws://${location.hostname}:${window.ws}`;
-			this.ws = new WebSocket(socketURL);
+			this.ws = new WebSocket(`ws://${location.hostname}:${window.ws}`);
 			
 			this.ws.addEventListener("open", (ev) => {
 				this.ws.send(JSON.stringify({action: 'subscribe'}));
@@ -53,12 +50,7 @@ import {Activity} from './views/activity.js';
 			
 			this.ws.addEventListener("message", (ev) => {
 				let data = JSON.parse(ev.data);
-				console.log("Message from server ", data);
-
-				if (this.processes[data.pid]) {
-					this.processes[data.pid](data);
-				}
-				
+				this.activity.update(data);
 			});
 		},
 		
@@ -83,19 +75,15 @@ import {Activity} from './views/activity.js';
 		},
 
 
-		createProcess: async function (endpoint, params, update) {
+		createProcess: async function (config) {
 			const pid = zen.util.createUUID();
-			params['pid'] = pid;
-			if (update) {
-				this.processes[pid] = update;
-			} else {
-				this.processes[pid] = this.activity.update;
-			}
+			config.params.pid = pid;
+			this.activity.processes[pid] = config;
 			
 			try {
-				const request = new Request(endpoint, {
+				const request = new Request(config.endpoint, {
 					method: "POST",
-					body: JSON.stringify(params)
+					body: JSON.stringify(config.params)
 				});
 				const response = await fetch(request);
 				if (!response.ok) {
@@ -109,8 +97,6 @@ import {Activity} from './views/activity.js';
 			
 		}
 
-		
-		
 	};
 
 	window.app = new App({});

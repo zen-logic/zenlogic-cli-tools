@@ -1,8 +1,10 @@
 <!-- Item info -->
 <div class="list-panel item-info">
 	
-	<div class="panel-list-no-header activity-panel" id="activity-panel">
-		<div>no activity</div>
+	<div class="panel-list-no-header activity-panel">
+		<div id="activity-panel">
+
+		</div>
 	</div>
 	
 </div> <!-- end: Item info -->

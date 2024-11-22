@@ -32,9 +32,15 @@ export class StorageRoots {
 		let indicator = zen.dom.getElement(':scope .indicator', this.root);
 		indicator.classList.remove('online', 'offline');
 		indicator.classList.add('busy');
-		indicator.innerHTML = 'scanning';
+		indicator.innerHTML = 'busy';
 		this.rescan.classList.remove('enabled');
-		this.app.createProcess('actions/scan', {root: root.id}, false);
+		this.app.createProcess({
+			endpoint: 'actions/scan',
+			params: {
+				description: `Scan: ${root.name}`,
+				root: root.id
+			}
+		});
 	}
 	
 
@@ -49,7 +55,6 @@ export class StorageRoots {
 
 	populateRoots (data) {
 		this.el.innerHTML = '';
-		console.log(data);
 		data.forEach(o => {
 			const item = zen.dom.createElement({
 				parent: this.el,
