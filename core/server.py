@@ -45,6 +45,7 @@ class ZenServer(gunicorn.app.base.BaseApplication):
 class FileHunter(object):
 
     def __init__(self, port=None, ws_port=None):
+        print(System)
         self.port = port
         self.ws_port = ws_port
         self.server = None
