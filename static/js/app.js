@@ -50,6 +50,7 @@ import {Activity} from './views/activity.js';
 			
 			this.ws.addEventListener("message", (ev) => {
 				let data = JSON.parse(ev.data);
+				console.log(data);
 				this.activity.update(data);
 			});
 		},

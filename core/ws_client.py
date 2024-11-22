@@ -1,4 +1,4 @@
-import asyncio
+import asyncio, signal
 from websockets.asyncio.client import connect
 
 
@@ -11,8 +11,6 @@ async def send(message, port=None):
         await websocket.send(message)
         response = await websocket.recv()
         return response
-    
-        
-if __name__ == "__main__":
-    response = asyncio.run(send('{"message": "Hello World!"}'))
-    print(f"{response}")
+
+
+

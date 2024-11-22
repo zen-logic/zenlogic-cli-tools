@@ -1,14 +1,27 @@
 import gunicorn.app.base
+import gunicorn.glogging 
+import gunicorn.workers.sync
+
 from core.context import Context
 from core.application import Application
 import core.util
-import multiprocessing
+import multiprocessing as mp
 import webbrowser
 import subprocess
 import os
+import signal
 from core.db import Database
 from config.settings import System
 
+import core.ws
+
+
+
+class ForkedProcess(mp.Process):
+    # override default behaviour to prevent AssertionError
+    def join(self, timeout=None):
+        pass
+    
 
 class ZenServer(gunicorn.app.base.BaseApplication):
     # based on https://docs.gunicorn.org/en/stable/custom.html
@@ -38,10 +51,12 @@ class FileHunter(object):
         self.info = None
         db_file = os.path.join(System['data'], 'fh.db')
         self.db = Database(db_file)
-
+        
         if not os.path.exists(db_file):
             blank = os.path.join(System['app_root'], 'core/blank.sql')
             self.db.run_sql_file(blank)
+
+        self.launch()
             
 
     def setup(self):
@@ -50,6 +65,8 @@ class FileHunter(object):
         
 
     def cleanup(self):
+        print(f'Shutting down FileHunter server...')
+        
         sql = "UPDATE `roots` SET `status` = 'ok'"
         self.db.execute(sql, None)
         sql = "DELETE FROM `processes`"
@@ -76,7 +93,7 @@ class FileHunter(object):
             self.cleanup()
             
             
-        # workers = (multiprocessing.cpu_count() * 2) + 1
+        # workers = (mp.cpu_count() * 2) + 1
         workers = 4
         
         if not self.port:
@@ -90,16 +107,28 @@ class FileHunter(object):
             'workers': workers,
             'when_ready': ready,
             'on_exit': shutdown,
-            'errorlog': '/dev/null'
+            'errorlog': os.devnull
         }
 
-        self.run_background_process('core.ws', str(self.ws_port))
+        # websocket server
+        self.create_process(core.ws.run, str(self.ws_port))
+        # web server
+        self.start_server(run, options)
+
+
+    def start_server(self, run, options):
         print(f'Running FileHunter server on port {self.port}...')
         self.server = ZenServer(run, options)
         self.server.run()
         
+
+    def create_process(self, target, *args):
+        p = ForkedProcess(target=target, args=args)
+        p.start()
+        # print(p.pid)
         
-    def run_background_process(self, *args, description=None):
+        
+    def run_background_process(self, *args):
         args = ['python', '-m'] + list(args)
         p = subprocess.Popen(args)
         

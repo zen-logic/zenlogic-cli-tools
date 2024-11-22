@@ -43,7 +43,6 @@ class MessageServer(object):
     async def handler(self, websocket):
         uid = str(uuid.uuid4())
         print(f'new connection: {uid}')
-        
         self.connected[uid] = websocket
         data = json.dumps({'id': uid})
         message = await websocket.send(data)
@@ -82,21 +81,19 @@ class MessageServer(object):
         stop = loop.create_future()
         loop.add_signal_handler(signal.SIGINT, stop.set_result, None)
         loop.add_signal_handler(signal.SIGTERM, stop.set_result, None)
-
         async with serve(self.handler, "", port):
             await stop
             await self.cleanup()
 
+        # try:
+        #     async with serve(self.handler, "", port):
+        #         await asyncio.get_running_loop().create_future()
+        #         await self.cleanup()
+        # except:
+        #     print('HERE')
+        #     pass
             
-if __name__ == "__main__":
 
-    port = None
-    
-    if len(sys.argv) > 1:
-        port = sys.argv[1]
-
+def run(port):
     MessageServer(port=port)
-    
-
-
     

@@ -50,10 +50,5 @@ class ScanProcess(object):
             asyncio.run(send(json.dumps(data), port=self.ws_port))
             
 
-if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        description = sys.argv[1]
-        root_id = sys.argv[2]
-        ws_port = sys.argv[3]
-        pid = sys.argv[4]
-        ScanProcess(description, root_id, ws_port, pid).run()
+def run(description, root_id, ws_port, pid):
+    ScanProcess(description, root_id, ws_port, pid).run()
