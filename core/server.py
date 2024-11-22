@@ -44,6 +44,18 @@ class FileHunter(object):
             self.db.run_sql_file(blank)
             
 
+    def setup(self):
+        sql = "UPDATE `roots` SET `status` = 'ok'"
+        self.db.execute(sql, None)
+        
+
+    def cleanup(self):
+        sql = "UPDATE `roots` SET `status` = 'ok'"
+        self.db.execute(sql, None)
+        sql = "DELETE FROM `processes`"
+        self.db.execute(sql, None)
+
+            
     def launch(self):
 
         def run(env, start_response):
@@ -55,9 +67,14 @@ class FileHunter(object):
 
         
         def ready(server):
+            self.setup()
             url = f'http://localhost:{self.port}'
             webbrowser.open(url)
 
+
+        def shutdown(server):
+            self.cleanup()
+            
             
         # workers = (multiprocessing.cpu_count() * 2) + 1
         workers = 4
@@ -72,6 +89,7 @@ class FileHunter(object):
             'bind': '%s:%s' % ('0.0.0.0', self.port),
             'workers': workers,
             'when_ready': ready,
+            'on_exit': shutdown,
             'errorlog': '/dev/null'
         }
 

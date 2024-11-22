@@ -19,36 +19,18 @@ class ScanProcess(object):
 
 
     def run(self):
-        self.update({
-            "info": {"detail": "Scan started"}
-        })
-
-        time.sleep(2)
+        self.db.update_record('roots', {'field': 'id', 'value': self.root_id}, {'status': 'busy'})
         
+        self.update({"info": {"detail": "Scan started"}})
         sql = "SELECT * FROM `roots` WHERE `id` = %s"
         root = self.db.get_record(sql, (self.root_id,))
-
         self.status = "running"
-
-        # count = 1
-        # while count < 10:
-        #     self.update({
-        #         "info": {
-        #             "detail": "ZEN LOGIC - DIAMOND - COVER LETTER.pdf",
-        #             "stats": [
-        #                 {"label": "Files", "value": count},
-        #                 {"label": "Folders", "value": count}
-        #             ]
-        #         }
-        #     })
-        #     count += 1
-        #     time.sleep(2)
-
         if root:
             scan = FileScan(self.db, update=self.update)
             scan.add_root(root['name'], root['path'])
             scan.process_folder('')
-            
+
+        self.db.update_record('roots', {'field': 'id', 'value': self.root_id}, {'status': 'ok'})
         self.done()
 
 

@@ -49,17 +49,6 @@ export class Activity {
 				process.panel.stats.innerHTML += `<div><b>${o.label}:</b> ${o.value}</div>`;
 			});
 		}
-		
-// {'info':
-//  {'detail': 'Skipping: 9781421566238.jpg',
-//   'stats': [{'label': 'Skipped', 'value': 60233}, {'label': 'Files', 'value': 0}, {'label': 'Folders', 'value': 0}]
-//  },
-//  'pid': '6d6d0351-c2c6-4bfe-a38b-ace71aad2256',
-//  'status': 'running',
-//  'description': 'Scan: EVO 970 EVO+',
-//  'action': 'broadcast'
-// }
-		
 	}
 	
 	
@@ -73,9 +62,7 @@ export class Activity {
 			}
 			let process = this.processes[data.pid];
 			this.updateProcess(process, data);
-			// console.log(data);
 		}
-		// this.el.innerHTML = data.message;
 	}
 	
 }

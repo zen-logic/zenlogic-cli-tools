@@ -38,7 +38,8 @@ CREATE TABLE IF NOT EXISTS items (
 CREATE TABLE IF NOT EXISTS roots (
     id   INTEGER       PRIMARY KEY AUTOINCREMENT,
     name VARCHAR (100),
-    path VARCHAR (600) 
+    path VARCHAR (600),
+    status VARCHAR (10)  DEFAULT ok	
 );
 
 
