@@ -9,6 +9,7 @@ import multiprocessing as mp
 import webbrowser
 import subprocess
 import os
+import json
 import signal
 from core.db import Database
 from config.settings import System
@@ -45,7 +46,7 @@ class ZenServer(gunicorn.app.base.BaseApplication):
 class FileHunter(object):
 
     def __init__(self, port=None, ws_port=None):
-        print(System)
+        self.host = 'localhost'
         self.port = port
         self.ws_port = ws_port
         self.server = None
@@ -56,7 +57,7 @@ class FileHunter(object):
         if not os.path.exists(db_file):
             blank = os.path.join(System['app_root'], 'core/blank.sql')
             self.db.run_sql_file(blank)
-
+            
         self.launch()
             
 
@@ -86,7 +87,7 @@ class FileHunter(object):
         
         def ready(server):
             self.setup()
-            url = f'http://localhost:{self.port}'
+            url = f'http://{self.host}:{self.port}'
             webbrowser.open(url)
 
 
@@ -111,6 +112,15 @@ class FileHunter(object):
             'errorlog': os.devnull
         }
 
+        run_file = os.path.join(System['data'], '.run')
+        with open(run_file, 'w') as f:
+            data = {
+                'pid': os.getpid(),
+                'host': self.host,
+                'port': self.port
+            }
+            f.write(json.dumps(data))
+        
         # websocket server
         self.create_process(core.ws.run, str(self.ws_port))
         # web server

@@ -49,3 +49,12 @@ def open_folder(directory):
     else: # assume Linux or other POSIX-like
         subprocess.run(['xdg-open', str(directory)])
 
+        
+def check_pid(pid):        
+    # does this PID exist as a running process?
+    try:
+        os.kill(pid, 0)
+    except OSError:
+        return False
+    else:
+        return True
