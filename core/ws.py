@@ -50,7 +50,7 @@ class MessageServer(object):
                 try:
                     message = await websocket.recv()
                     data = json.loads(message)
-                    print(uid, data)
+                    # print(uid, data)
                     await self.process_message(uid, data)
                 except ConnectionClosed as e:
                     print(e)

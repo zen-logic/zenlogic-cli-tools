@@ -30,15 +30,17 @@ class FH(wx.Frame):
         menu_bar = wx.MenuBar()
         menu = wx.Menu()
         
-        self.m_exit = menu.Append(wx.ID_EXIT, "&Quit File Hunter")
-        self.Bind(wx.EVT_MENU, self.on_shutdown, self.m_exit)
+        self.mnu_exit = menu.Append(wx.ID_EXIT, "&Quit File Hunter")
+        self.Bind(wx.EVT_MENU, self.on_shutdown, self.mnu_exit)
 
-        self.m_start = menu.Append(wx.ID_ANY, "&Start server\tCTRL+S")
-        self.Bind(wx.EVT_MENU, self.start_server, self.m_start)
+        self.mnu_start = menu.Append(wx.ID_ANY, "Star&t server\tCTRL+T")
+        self.Bind(wx.EVT_MENU, self.start_server, self.mnu_start)
 
-        self.m_client = menu.Append(wx.ID_ANY, "Show &Client\tCTRL+C")
-        self.m_client.Enable(False)
-        self.Bind(wx.EVT_MENU, self.show_client, self.m_client)
+        menu.Append(wx.ID_SEPARATOR)
+        
+        self.mnu_client = menu.Append(wx.ID_ANY, "&Open Web client\tCTRL+O")
+        self.Bind(wx.EVT_MENU, self.show_client, self.mnu_client)
+        self.mnu_client.Enable(False)
         
         menu_bar.Append(menu, "Server")
         self.SetMenuBar(menu_bar)
@@ -68,13 +70,13 @@ class FH(wx.Frame):
         if not self.fh_server:
             self.fh_server = mp.Process(target=self.start_fh_server, args=(self.queue,))
             self.fh_server.start()
-            self.m_start.SetItemLabel("&Stop server\tCTRL+S")
-            self.m_client.Enable(True)
+            self.mnu_start.SetItemLabel("&Stop server\tCTRL+S")
+            self.mnu_client.Enable(True)
         else:
             self.fh_server.terminate()
             self.fh_server.join()
-            self.m_start.SetItemLabel("&Start server\tCTRL+S")
-            self.m_client.Enable(False)
+            self.mnu_start.SetItemLabel("&Start server\tCTRL+S")
+            self.mnu_client.Enable(False)
 
         
     def on_shutdown(self, event):

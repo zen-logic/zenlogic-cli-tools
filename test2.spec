@@ -6,28 +6,7 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[],
-    hiddenimports=[
-
-        'core.handlers.base',
-        'core.handlers.debug',
-        'core.handlers.static',
-        
-        'app.handlers.default',
-        'app.handlers.main',
-        'app.handlers.notfound',
-        
-        'app.handlers.actions.open_folder',
-        'app.handlers.actions.scan',
-        'app.handlers.actions.test',
-        
-        'app.handlers.data.folders',
-        'app.handlers.data.info',
-        'app.handlers.data.path',
-        'app.handlers.data.roots',
-        'app.handlers.data.search',
-        'app.handlers.data.stats'
-
-    ],
+    hiddenimports=['app.build_imports'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
