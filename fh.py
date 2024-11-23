@@ -15,8 +15,6 @@ def start_server():
 
 if __name__ == '__main__':
     
-    # print(os.getpid())
-
     run_file = os.path.join(System['data'], '.run')
 
     if os.path.exists(run_file):
@@ -32,6 +30,7 @@ if __name__ == '__main__':
                     webbrowser.open(url)
                     sys.exit()
 
+    # no server found, launch a new one
     start_server()
     
 

@@ -2,4 +2,5 @@
 <div class="menu-bar">
 	<img src="img/enso.png" class="logo" />
 	<div class="title">FileHunter</div>
+	<!-- <div>Foobar</div> -->
 </div> <!-- end: Menu bar -->

@@ -78,7 +78,6 @@ export class Info {
 		} catch (error) {
 			console.error(error);
 		}
-
 	}
 	
 	

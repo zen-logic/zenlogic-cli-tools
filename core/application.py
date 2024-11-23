@@ -99,7 +99,7 @@ class Application(object):
         if inspect.isclass(handler_object):
 
             try:
-                print(handler_object)
+                # print(handler_object)
                 # create a runable instance of this handler object
                 handler_instance = handler_object(self)
                 self.running_handlers.append(handler_instance)

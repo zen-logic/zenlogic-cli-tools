@@ -41,13 +41,17 @@ class ScanProcess(object):
         
     def update(self, data, immediate=False):
         current_time = int(time.perf_counter() * 1000)
+        # limit rate of messsages sent
         if ((current_time - self.last_update) > 250) or immediate == True:
             self.last_update = current_time
             data["pid"] = self.pid
             data["status"] = self.status
             data["description"] = self.description
             data["action"] = "broadcast"
-            asyncio.run(send(json.dumps(data), port=self.ws_port))
+            try:
+                asyncio.run(send(json.dumps(data), port=self.ws_port))
+            except:
+                sys.exit()
             
 
 def run(description, root_id, ws_port, pid):

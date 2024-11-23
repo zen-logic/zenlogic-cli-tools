@@ -8,6 +8,8 @@ class MessageServer(object):
 
     
     def __init__(self, port=None):
+        self.loop = None
+        self.stop = None
         self.port = port
         self.connected = {}
         self.subscribed = set()
@@ -34,10 +36,6 @@ class MessageServer(object):
         for uid in self.subscribed:
             del data['action']
             await self.send_data(uid, data)
-        
-
-    async def cleanup(self):
-        print('message server shutting down...')
         
 
     async def handler(self, websocket):
@@ -67,7 +65,13 @@ class MessageServer(object):
                 if uid in self.subscribed:
                     self.subscribed.remove(uid)
                 del self.connected[uid]
-            
+
+
+    def cleanup(self, *args):
+        print('message server shutting down...')
+        if self.stop and not self.stop.done():
+            self.stop.set_result(0)
+
 
     async def main(self):
         if self.port:
@@ -77,21 +81,15 @@ class MessageServer(object):
 
         print(f'Message server starting on port {port}...')
             
-        loop = asyncio.get_running_loop()
-        stop = loop.create_future()
-        loop.add_signal_handler(signal.SIGINT, stop.set_result, None)
-        loop.add_signal_handler(signal.SIGTERM, stop.set_result, None)
+        self.loop = asyncio.get_running_loop()
+        self.stop = self.loop.create_future()
+        self.loop.add_signal_handler(signal.SIGTERM, self.cleanup, None)
         async with serve(self.handler, "", port):
-            await stop
-            await self.cleanup()
+            await self.stop
 
-        # try:
-        #     async with serve(self.handler, "", port):
-        #         await asyncio.get_running_loop().create_future()
-        #         await self.cleanup()
-        # except:
-        #     print('HERE')
-        #     pass
+        # async with serve(self.handler, "", port):
+        #     await asyncio.get_running_loop().create_future()
+        #     await self.cleanup()
             
 
 def run(port):

@@ -1,6 +1,7 @@
 import gunicorn.app.base
 import gunicorn.glogging 
 import gunicorn.workers.sync
+import gunicorn.arbiter
 
 from core.context import Context
 from core.application import Application
@@ -17,12 +18,15 @@ from config.settings import System
 import core.ws
 
 
-
 class ForkedProcess(mp.Process):
-    # override default behaviour to prevent AssertionError
+    # override default behaviour to prevent
+    # AssertionError on forked processes
     def join(self, timeout=None):
-        pass
-    
+        try:
+            super().join(timeout=None)
+        except:
+            pass
+
 
 class ZenServer(gunicorn.app.base.BaseApplication):
     # based on https://docs.gunicorn.org/en/stable/custom.html
@@ -45,12 +49,14 @@ class ZenServer(gunicorn.app.base.BaseApplication):
 
 class FileHunter(object):
 
-    def __init__(self, port=None, ws_port=None):
+    def __init__(self, port=None, ws_port=None, queue=None):
+        self.queue = queue
         self.host = 'localhost'
         self.port = port
         self.ws_port = ws_port
         self.server = None
         self.info = None
+        self.ws = None
         db_file = os.path.join(System['data'], 'fh.db')
         self.db = Database(db_file)
         
@@ -68,7 +74,11 @@ class FileHunter(object):
 
     def cleanup(self):
         print(f'Shutting down FileHunter server...')
-        
+
+        if self.ws:
+            self.ws.terminate()
+            self.ws.join()
+            
         sql = "UPDATE `roots` SET `status` = 'ok'"
         self.db.execute(sql, None)
         sql = "DELETE FROM `processes`"
@@ -78,7 +88,7 @@ class FileHunter(object):
     def launch(self):
 
         def run(env, start_response):
-            print ('>>> process request')
+            # print ('>>> process request')
             context = Context(env=env)
             application = Application(context, self)
             start_response(context.status, context.get_headers())
@@ -87,8 +97,8 @@ class FileHunter(object):
         
         def ready(server):
             self.setup()
-            url = f'http://{self.host}:{self.port}'
-            webbrowser.open(url)
+            # url = f'http://{self.host}:{self.port}'
+            # webbrowser.open(url)
 
 
         def shutdown(server):
@@ -114,15 +124,11 @@ class FileHunter(object):
 
         run_file = os.path.join(System['data'], '.run')
         with open(run_file, 'w') as f:
-            data = {
-                'pid': os.getpid(),
-                'host': self.host,
-                'port': self.port
-            }
+            data = {'pid': os.getpid(), 'host': self.host, 'port': self.port}
             f.write(json.dumps(data))
         
         # websocket server
-        self.create_process(core.ws.run, str(self.ws_port))
+        self.ws = self.create_process(core.ws.run, str(self.ws_port))
         # web server
         self.start_server(run, options)
 
@@ -131,12 +137,12 @@ class FileHunter(object):
         print(f'Running FileHunter server on port {self.port}...')
         self.server = ZenServer(run, options)
         self.server.run()
-        
 
+        
     def create_process(self, target, *args):
-        p = ForkedProcess(target=target, args=args)
+        p = ForkedProcess(target=target, args=args, daemon=True)
         p.start()
-        # print(p.pid)
+        return p
         
         
     def run_background_process(self, *args):
