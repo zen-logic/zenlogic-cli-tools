@@ -1,4 +1,4 @@
-import asyncio, json, uuid, sys, signal
+import asyncio, json, sys, signal
 from websockets.asyncio.server import serve
 from websockets.exceptions import ConnectionClosed
 import core.util
@@ -34,13 +34,14 @@ class MessageServer(object):
 
     async def broadcast(self, uid, data):
         for uid in self.subscribed:
-            del data['action']
+            if 'action' in data:
+                del data['action']
             await self.send_data(uid, data)
         
 
     async def handler(self, websocket):
-        uid = str(uuid.uuid4())
-        print(f'new connection: {uid}')
+        uid = str(websocket.id)
+        print(f'WS: new connection: {uid}')
         self.connected[uid] = websocket
         data = json.dumps({'id': uid})
         message = await websocket.send(data)
@@ -54,21 +55,21 @@ class MessageServer(object):
                     await self.process_message(uid, data)
                 except ConnectionClosed as e:
                     print(e)
-                    print(f'removing connection: {uid}')
+                    print(f'WS: removing connection: {uid}')
                     if uid in self.subscribed:
                         self.subscribed.remove(uid)
                     del self.connected[uid]
                     break
         finally:
             if uid in self.connected:
-                print(f'removing connection: {uid}')
+                print(f'WS: removing connection: {uid}')
                 if uid in self.subscribed:
                     self.subscribed.remove(uid)
                 del self.connected[uid]
 
 
     def cleanup(self, *args):
-        print('message server shutting down...')
+        print('WS: message server shutting down...')
         if self.stop and not self.stop.done():
             self.stop.set_result(0)
 
@@ -79,7 +80,7 @@ class MessageServer(object):
         else:
             port = 8090
 
-        print(f'Message server starting on port {port}...')
+        print(f'WS: Message server starting on port {port}...')
             
         self.loop = asyncio.get_running_loop()
         self.stop = self.loop.create_future()

@@ -64,29 +64,13 @@ class FileHunter(object):
             blank = os.path.join(System['app_root'], 'core/blank.sql')
             self.db.run_sql_file(blank)
             
-        self.launch()
+        self.setup()
             
 
     def setup(self):
         sql = "UPDATE `roots` SET `status` = 'ok'"
         self.db.execute(sql, None)
         
-
-    def cleanup(self):
-        print(f'Shutting down FileHunter server...')
-
-        if self.ws:
-            self.ws.terminate()
-            self.ws.join()
-            
-        sql = "UPDATE `roots` SET `status` = 'ok'"
-        self.db.execute(sql, None)
-        sql = "DELETE FROM `processes`"
-        self.db.execute(sql, None)
-
-            
-    def launch(self):
-
         def run(env, start_response):
             # print ('>>> process request')
             context = Context(env=env)
@@ -96,14 +80,24 @@ class FileHunter(object):
 
         
         def ready(server):
-            self.setup()
+            pass
             # url = f'http://{self.host}:{self.port}'
             # webbrowser.open(url)
 
 
         def shutdown(server):
-            self.cleanup()
+            print('SERVER: Shutting down')
+            pass
+            # self.cleanup()
+
+
+        def child_exit(server, child):
+            print('child exit', server, child)
             
+
+        def worker_exit(server, worker):
+            print('worker exit', server, worker)
+
             
         # workers = (mp.cpu_count() * 2) + 1
         workers = 4
@@ -119,12 +113,20 @@ class FileHunter(object):
             'workers': workers,
             'when_ready': ready,
             'on_exit': shutdown,
+            'child_exit': child_exit,
+            'worker_exit': worker_exit,
             'errorlog': os.devnull
         }
 
         run_file = os.path.join(System['data'], '.run')
+        
         with open(run_file, 'w') as f:
-            data = {'pid': os.getpid(), 'host': self.host, 'port': self.port}
+            data = {
+                'pid': os.getpid(),
+                'host': self.host,
+                'port': self.port,
+                'websocket': self.ws_port
+            }
             f.write(json.dumps(data))
         
         # websocket server
@@ -134,7 +136,7 @@ class FileHunter(object):
 
 
     def start_server(self, run, options):
-        print(f'Running FileHunter server on port {self.port}...')
+        print(f'SERVER: Running FileHunter server on port {self.port}...')
         self.server = ZenServer(run, options)
         self.server.run()
 
