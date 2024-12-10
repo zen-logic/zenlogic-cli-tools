@@ -128,7 +128,7 @@ class FileHunter(object):
                 'websocket': self.ws_port
             }
             f.write(json.dumps(data))
-        
+
         # websocket server
         self.ws = self.create_process(core.ws.run, str(self.ws_port))
         # web server

@@ -264,8 +264,8 @@ def main():
     
 
 if __name__ == "__main__":
-    from multiprocessing import freeze_support
-    freeze_support()
+    import multiprocessing as mp
+    mp.freeze_support()
     mp.set_start_method('fork')
     asyncio.run(main_async())
     # main()

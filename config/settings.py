@@ -19,6 +19,8 @@ def root_dir():
 
 
 System = {
+    "APP_NAME": "File Hunter",
+
     "app_root": root_dir(),
     "data": data_dir(),
     "static": os.path.join(root_dir(), "static"),
