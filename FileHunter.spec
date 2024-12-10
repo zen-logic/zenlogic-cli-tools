@@ -6,7 +6,7 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[],
-    hiddenimports=[],
+    hiddenimports=['app.build_imports'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -28,12 +28,12 @@ exe = EXE(
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=True,
+    console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
-    entitlements_file=None
+    entitlements_file=None,
 )
 coll = COLLECT(
     exe,
@@ -43,4 +43,10 @@ coll = COLLECT(
     upx=True,
     upx_exclude=[],
     name='FileHunter',
+)
+app = BUNDLE(
+    coll,
+    name='File Hunter.app',
+    icon=None,
+    bundle_identifier=None,
 )

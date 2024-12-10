@@ -1,8 +1,8 @@
 import os, pathlib, wx, wx.html2
+from config.settings import System
 
 def get_image_path(name):
-    path = pathlib.Path(__file__).parent.resolve()
-    path = os.path.join(path, 'img')
+    path = os.path.join(System['static'], 'img/ui')
     return os.path.join(path, name)
 
 
