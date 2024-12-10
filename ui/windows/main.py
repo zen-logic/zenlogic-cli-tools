@@ -26,6 +26,7 @@ class MainWindow(wx.Frame):
         self._ws = None
         self.server_status = None
         self.can_close = True
+        self.quitting = False
         self.timer = None
         self.queue = mp.Queue()
         self.layout()
@@ -105,13 +106,11 @@ class MainWindow(wx.Frame):
         # 2. info panel
         panel_header(pnl_activity, sizer_activity, "Activity")
         self.activity = InfoGrid(pnl_activity)
-        # self.activity.set_item('one', 'this is value one')
-        # self.activity.set_item('two', 'this is value two')
         sizer_activity.Add(self.activity, 1, flag=wx.EXPAND|wx.ALL, border=0)
         
         # 3. webview panel
         self.webview = create_webview(pnl_webview)
-        sizer_webview.Add(self.webview, 1, wx.EXPAND)
+        sizer_webview.Add(self.webview, 1, flag=wx.EXPAND|wx.ALL, border=0)
 
         # 4. message log panel
         panel_header(pnl_log, sizer_log, "Message log")
@@ -130,20 +129,26 @@ class MainWindow(wx.Frame):
 
         
     def on_resize(self, evt):
-        print('resize...')
+        # print('resize...')
         evt.Skip()
 
         
     def on_close(self, evt):
-        print('close...')
-        self.shutdown()
-        evt.Skip()
+        if self.can_close:
+            print('close...')
+            self.Destroy()
+        else:
+            self.quitting = True
+            self.stop_server()
 
         
     def on_quit(self, evt):
-        print('quit...')
-        self.shutdown()
-        evt.Skip()
+        if self.can_close:
+            print('quit...')
+            self.Destroy()
+        else:
+            self.quitting = True
+            self.stop_server()
 
         
     def on_minimise(self, evt):
@@ -197,6 +202,10 @@ class MainWindow(wx.Frame):
             self._ws = StartCoroutine(self.ws_connect, self)
             self.log.write('Server started.')
             self.refresh_status()
+            self.webview.LoadURL(self.server_url)
+            self.webview.Show()
+            sizer = self.webview.GetParent().GetSizer()
+            sizer.Layout()
         else:
             self.stop_server()
 
@@ -223,6 +232,7 @@ class MainWindow(wx.Frame):
     def stop_server(self):
         
         if self._server:
+            self.webview.Hide()
             self.activity.set_item('server', 'stopping...')
             self.log.write('Stopping server, please wait...')
             self.can_close = False
@@ -244,11 +254,14 @@ class MainWindow(wx.Frame):
         if self.timer:
             self.timer.Stop()
             self.timer = None
-            
-        self.can_close = True
-        self.server_status = None
-        self.log.write('Server stopped.')
-        self.refresh_status()
+
+        if self.quitting == True:
+            self.Destroy()
+        else:
+            self.can_close = True
+            self.server_status = None
+            self.log.write('Server stopped.')
+            self.refresh_status()
                 
 
     def check_server_status(self):
@@ -264,12 +277,4 @@ class MainWindow(wx.Frame):
 
         return None
 
-
-    def shutdown(self):
-
-        print('FH: Shutting down...')
-        self.status_bar.SetStatusText("Please wait, shutting down...", 0)
-        self.stop_server()
-
-        self.Destroy()
 
