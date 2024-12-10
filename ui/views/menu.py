@@ -12,7 +12,7 @@ class Menu(wx.MenuBar):
                                "&Quit",
                                helpString=f"Quit {System['APP_NAME']}")
         self.Bind(wx.EVT_MENU, self.app_window.on_quit, self.mnu_exit)
-        self.Append(menu, System['APP_NAME'])
+        self.Append(menu, 'Server')
 
         self.mnu_start = menu.Append(wx.ID_ANY,
                                      "&Start server\tCTRL+S",

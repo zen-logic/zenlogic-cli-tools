@@ -23,7 +23,7 @@ exe = EXE(
     Tree('static', prefix='static'),
     Tree('templates', prefix='templates'),
     exclude_binaries=True,
-    name='FileHunter',
+    name='filehunter',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -42,7 +42,7 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='FileHunter',
+    name='File Hunter',
 )
 app = BUNDLE(
     coll,
