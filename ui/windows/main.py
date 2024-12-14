@@ -10,10 +10,30 @@ from ..views.status import StatusBar
 from ..views.menu import Menu
 from ..views.roots import StorageRoots
 from ..views.messages import Messages
+from .about import AboutBox
 
 from core.server import FileHunter
 import core.util
 
+
+class FileDrop(wx.FileDropTarget):
+
+    def __init__(self, window):
+        """Constructor"""
+        wx.FileDropTarget.__init__(self)
+        self.window = window
+
+
+    def OnDropFiles(self, x, y, filenames):
+        """
+        When files are dropped, write where they were dropped and then
+        the file paths themselves
+        """
+        print("\n%d file(s) dropped at %d,%d:\n" % (len(filenames), x, y))
+        print (filenames)
+        return True
+        # for filepath in filenames:
+        #     self.window.updateText(filepath + '\n')    
 
 
 class MainWindow(wx.Frame):
@@ -29,95 +49,105 @@ class MainWindow(wx.Frame):
         self.quitting = False
         self.timer = None
         self.queue = mp.Queue()
+        self.drop_target = FileDrop(self)
         self.layout()
         self.setup_events()
         self.refresh_status()
         self.Show(True)
+        self.SetDropTarget(self.drop_target)
+        self.start_server(None)
 
 
+    def show_about(self, evt):
+        dlg = AboutBox(self)
+        dlg.ShowModal()
+        dlg.Destroy()
+
+        
     def setup_events(self):
         self.Bind(wx.EVT_SIZE, self.on_resize)
         self.Bind(wx.EVT_ACTIVATE, self.on_activate)
         self.Bind(wx.EVT_CLOSE, self.on_close)
         self.Bind(wx.EVT_ICONIZE, self.on_minimise)
 
+        self.webview.AddScriptMessageHandler('wxfh')
+        self.Bind(wx.html2.EVT_WEBVIEW_LOADED, self.on_webview_loaded)
+        self.Bind(wx.html2.EVT_WEBVIEW_SCRIPT_MESSAGE_RECEIVED, self.on_webview_message)
+        self.Bind(wx.html2.EVT_WEBVIEW_SCRIPT_RESULT, self.on_webview_script_result)
+        self.Bind(wx.html2.EVT_WEBVIEW_ERROR, self.on_webview_error)
 
+        # self.Bind(wx.html2.EVT_WEBVIEW_NAVIGATING, self.on_webview_event)
+        # self.Bind(wx.html2.EVT_WEBVIEW_NAVIGATED, self.on_webview_event)
+        # self.Bind(wx.html2.EVT_WEBVIEW_NEWWINDOW, self.on_webview_event)
+        # self.Bind(wx.html2.EVT_WEBVIEW_TITLE_CHANGED, self.on_webview_event)
+        # self.Bind(wx.html2.EVT_WEBVIEW_FULLSCREEN_CHANGED, self.on_webview_event)
+        
+
+    def on_webview_loaded(self, evt):
+        # ignore "about:blank"
+        if self.webview.CurrentURL.startswith('http'):
+            print('web view loaded')
+            self.webview.RunScriptAsync('function foo () {return(42);} foo();', clientData=None)
+
+
+    def on_webview_message(self, evt):
+        print(f'webview message received: {evt.GetString()}')
+
+
+    def on_webview_script_result(self, evt):
+        # print('\n'.join(dir(evt)))
+        print(f'webview script result received: {evt.GetString()}')
+
+
+    def on_webview_error(self, evt):
+        print(f'webview error: {evt.GetString()}')
+        
+        
     def layout(self):
         w, h = wx.DisplaySize()
         self.SetMinSize((640, 480))
         self.SetSize(w - 150, h - 200)
-        
         self.Center()
 
         # splitters
         self.h_split = wx.SplitterWindow(self, -1, style=wx.SP_LIVE_UPDATE | wx.SP_3DSASH)
         self.h_split.SetSashGravity(0)
         self.h_split.SetMinimumPaneSize(100)
-        
         self.lv_split = wx.SplitterWindow(self.h_split, -1, style=wx.SP_LIVE_UPDATE | wx.SP_3DSASH)
         self.lv_split.SetSashGravity(1)
         self.lv_split.SetMinimumPaneSize(100)
-
         self.rv_split = wx.SplitterWindow(self.h_split, -1, style=wx.SP_LIVE_UPDATE | wx.SP_3DSASH)
         self.rv_split.SetSashGravity(1)
         self.rv_split.SetMinimumPaneSize(100)
-        
         self.h_split.SplitVertically(self.lv_split, self.rv_split, 240)
 
         # add panels to split zones
         pnl_items = wx.Panel(self.lv_split)
         sizer_items = wx.BoxSizer(wx.VERTICAL)
         pnl_items.SetSizer(sizer_items)
-
         pnl_activity = wx.Panel(self.lv_split)
         sizer_activity = wx.BoxSizer(wx.VERTICAL)
         pnl_activity.SetSizer(sizer_activity)
-
         self.lv_split.SplitHorizontally(pnl_items, pnl_activity, -240)
         
         pnl_webview = wx.Panel(self.rv_split)
         sizer_webview = wx.BoxSizer(wx.VERTICAL)
         pnl_webview.SetSizer(sizer_webview)
-        
         pnl_log = wx.Panel(self.rv_split)
         sizer_log = wx.BoxSizer(wx.VERTICAL)
         pnl_log.SetSizer(sizer_log)
-
         self.rv_split.SplitHorizontally(pnl_webview, pnl_log, -200)
 
         # add controls to panels
-
         # 1. items panel
-        panel_header(pnl_items, sizer_items, "Storage roots")
-        
-        self.items = StorageRoots(pnl_items, -1, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER)
-        self.il = wx.ImageList(24, 24)
-        
-        self.icn1 = self.il.Add(wx.Bitmap(get_image_path('green.png'), wx.BITMAP_TYPE_ANY))
-        self.icn2 = self.il.Add(wx.Bitmap(get_image_path('amber.png'), wx.BITMAP_TYPE_ANY))
-        self.icn3 = self.il.Add(wx.Bitmap(get_image_path('red.png'), wx.BITMAP_TYPE_ANY))
-        self.items.SetImageList(self.il, wx.IMAGE_LIST_SMALL)
-        self.items.InsertColumn(0, "")
-        idx = self.items.InsertItem(self.items.GetItemCount(), 'foobar', 0)
-        idx = self.items.InsertItem(self.items.GetItemCount(), 'foobar 2 this has quite a long title', 1)
-        idx = self.items.InsertItem(self.items.GetItemCount(), 'foobar 3', 2)
-        sizer_items.Add(self.items, 1, flag=wx.EXPAND|wx.ALL, border=0)
-        
+        self.roots = StorageRoots(self, sizer_items, pnl_items)
         # 2. info panel
-        panel_header(pnl_activity, sizer_activity, "Activity")
-        self.activity = InfoGrid(pnl_activity)
-        sizer_activity.Add(self.activity, 1, flag=wx.EXPAND|wx.ALL, border=0)
-        
+        self.activity = InfoGrid(sizer_activity, pnl_activity)
         # 3. webview panel
         self.webview = create_webview(pnl_webview)
         sizer_webview.Add(self.webview, 1, flag=wx.EXPAND|wx.ALL, border=0)
-
         # 4. message log panel
-        panel_header(pnl_log, sizer_log, "Message log")
-        self.log = Messages(pnl_log)
-        sizer_log.Add(self.log, 1, flag=wx.EXPAND|wx.ALL, border=0)
-        self.log.write('Application started.')
-        
+        self.log = Messages(sizer_log, pnl_log)
         # other window furniture
         self.status_bar = StatusBar(self)
         self.menu = Menu(self)

@@ -51,7 +51,7 @@ class FileHunter(object):
 
     def __init__(self, port=None, ws_port=None, queue=None):
         self.queue = queue
-        self.host = 'localhost'
+        self.host = '127.0.0.1'
         self.port = port
         self.ws_port = ws_port
         self.server = None

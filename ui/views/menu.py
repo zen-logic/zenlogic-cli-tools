@@ -9,8 +9,8 @@ class Menu(wx.MenuBar):
         menu = wx.Menu()
         
         self.mnu_exit = menu.Append(wx.ID_EXIT,
-                               "&Quit",
-                               helpString=f"Quit {System['APP_NAME']}")
+                                    "&Quit",
+                                    helpString=f"Quit {System['APP_NAME']}")
         self.Bind(wx.EVT_MENU, self.app_window.on_quit, self.mnu_exit)
         self.Append(menu, 'Server')
 
@@ -21,4 +21,11 @@ class Menu(wx.MenuBar):
 
         menu.Append(wx.ID_SEPARATOR)
         
+        self.help_menu = wx.Menu()
+        self.mnu_help = self.help_menu.Append(wx.ID_ABOUT, "&About File Hunter")
+        self.Append(self.help_menu, "&Help")
+        self.Bind(wx.EVT_MENU, self.app_window.show_about, self.mnu_help)
+
         app_window.SetMenuBar(self)
+        
+        

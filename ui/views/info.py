@@ -1,12 +1,16 @@
 import wx, wx.grid
+from ..util import *
 
 
 class InfoGrid(wx.grid.Grid):
 
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, sizer, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+
+        panel_header(self.Parent, sizer, "Server status")
+        sizer.Add(self, 1, flag=wx.EXPAND|wx.ALL, border=0)
+
         self.label_width = 100
         self.attr = wx.grid.GridCellAttr()
         self.EnableEditing(False)

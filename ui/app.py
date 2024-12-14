@@ -5,9 +5,10 @@ import wx
 from wxasync import AsyncBind, WxAsyncApp, StartCoroutine
 from config.settings import System
 from .windows.main import MainWindow
+from .data.controller import Controller
 
 
-class App(wx.App):
+class App(wx.App, Controller):
 
     def __init__(self):
         super().__init__()
@@ -18,10 +19,11 @@ class App(wx.App):
         self.MainLoop()
 
         
-class AsyncApp(WxAsyncApp):
+class AsyncApp(WxAsyncApp, Controller):
 
     def __init__(self):
-        # 5ms async loop, increase duration to reduce CPU load
+        # 5ms async loop, increase duration to reduce
+        # CPU load but reduce UI responsiveness
         super().__init__(sleep_duration=0.005)
         self.win = MainWindow(self)
 
