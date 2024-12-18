@@ -286,6 +286,7 @@ class MainWindow(wx.Frame):
     def stop_server(self):
         
         if self._server:
+            self.roots.clear_items()
             self.webview.Hide()
             self.activity.set_item('server', 'stopping...')
             self.log.write('Stopping server, please wait...')

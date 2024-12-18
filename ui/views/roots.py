@@ -1,7 +1,7 @@
 import wx
 import wx.lib.mixins.listctrl as listmix
 from ..util import *
-import json
+import os, json
 
 STATUS = {
     'online': 0,
@@ -18,6 +18,7 @@ class StorageRoots(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
         self.app = main_win.app
         self.panel_sizer = sizer
         self.selected = None
+        self.timer = None
         super().__init__(style = wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER, *args, **kwargs)
         listmix.ListCtrlAutoWidthMixin.__init__(self)
         self.set_images()
@@ -46,18 +47,19 @@ class StorageRoots(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.button_panel.SetSizer(sizer)
 
-        btn_add = wx.Button(self.button_panel, 10, "Add")
-        btn_add.Bind(wx.EVT_BUTTON, self.on_add)
-        sizer.Add(btn_add, 1, flag = wx.EXPAND | wx.ALL, border=6)
-        btn_add.Disable()
+        self.btn_add = wx.Button(self.button_panel, 10, "Add")
+        self.btn_add.Bind(wx.EVT_BUTTON, self.on_add)
+        sizer.Add(self.btn_add, 1, flag = wx.EXPAND | wx.ALL, border=6)
+        # self.btn_add.Disable()
 
-        btn_rescan = wx.Button(self.button_panel, 20, "Rescan")
-        btn_rescan.Bind(wx.EVT_BUTTON, self.on_rescan)
-        sizer.Add(btn_rescan, 1, flag=wx.EXPAND | wx.ALL, border=6)
-        btn_rescan.Disable()
+        self.btn_rescan = wx.Button(self.button_panel, 20, "Rescan")
+        self.btn_rescan.Bind(wx.EVT_BUTTON, self.on_rescan)
+        sizer.Add(self.btn_rescan, 1, flag=wx.EXPAND | wx.ALL, border=6)
+        self.btn_rescan.Disable()
         
 
     def on_add(self, evt):
+        self.deselect()
         dlg = wx.DirDialog(self, "Choose a directory:", style=wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST)
         if dlg.ShowModal() == wx.ID_OK:
             print('You selected: %s' % dlg.GetPath())
@@ -118,7 +120,11 @@ class StorageRoots(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
         
 
     def on_select(self, evt):
+        print('select')
         self.selected = self.root_items[self.GetItemData(evt.Index)]
+        if self.selected['status'] == 'online':
+            self.btn_rescan.Enable()
+
         data = json.dumps({'dataset': self.selected})
         script = f'app.storageRoots.selectRoot({data})'
         self.main_win.webview.RunScriptAsync(script, clientData=None)
@@ -133,18 +139,46 @@ class StorageRoots(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
     def deselect(self):
         print('deselect')
         self.selected = None
+        self.btn_rescan.Disable()
         for idx in range(0, self.GetItemCount(), 1):
             self.Select(idx, on=0)
             
 
     def set_data(self, data):
         print(data)
+
+        if self.timer:
+            self.timer.Stop()
+            self.timer = None
+        
         self.clear_items()
         for item in data:
             self.add_root(item)
+
+        self.timer = wx.PyTimer(self.check_online)
+        self.timer.Start(5000)
+        
+
+    def check_online(self):
+        for item in self.root_items.values():
+            exists = os.path.exists(item['path'])
+            if exists and item['status'] == 'offline':
+                item['status'] = 'online'
+                self.update_root(item)
+            elif not exists and item['status'] == 'online':
+                item['status'] = 'offline'
+                self.update_root(item)
+
+
+    def update_root(self, item):
+        idx = item['idx']
+        self.SetItemImage(idx, STATUS.get(item['status'], 0))
+        self.SetItem(idx, 1, item['name'])
+        self.SetItem(idx, 2, item['status'])
             
 
     def clear_items(self):
+        self.selected = None
         self.DeleteAllItems()
         self.root_items = {}
         
