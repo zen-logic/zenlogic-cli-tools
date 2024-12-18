@@ -1,4 +1,6 @@
 import * as zen from '../lib/zen.js';
+var wxfh = window.wxfh;
+
 
 export class StorageRoots {
 
@@ -54,6 +56,11 @@ export class StorageRoots {
 	
 
 	populateRoots (data) {
+		if (wxfh) wxfh.postMessage({
+			type: 'roots',
+			data: data
+		});
+		
 		this.el.innerHTML = '';
 		data.forEach(o => {
 			const item = zen.dom.createElement({
@@ -96,6 +103,7 @@ export class StorageRoots {
 
 	
 	async selectRoot (item) {
+		console.log(item);
 		this.app.search.search.value = '';
 		const selected = zen.dom.getElement(`:scope>div[data-id="${item.dataset.id}"]`, this.el);
 		this.deselect();

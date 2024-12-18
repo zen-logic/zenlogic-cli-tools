@@ -1,6 +1,7 @@
 import wx
 import wx.lib.mixins.listctrl as listmix
 from ..util import *
+import json
 
 STATUS = {
     'online': 0,
@@ -12,9 +13,11 @@ STATUS = {
 class StorageRoots(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
 
     def __init__(self, main_win, sizer, *args, **kwargs):
+        self.root_items = {}
         self.main_win = main_win
         self.app = main_win.app
         self.panel_sizer = sizer
+        self.selected = None
         super().__init__(style = wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_NO_HEADER, *args, **kwargs)
         listmix.ListCtrlAutoWidthMixin.__init__(self)
         self.set_images()
@@ -69,6 +72,7 @@ class StorageRoots(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
         
     def setup_events(self):
         self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.on_select)
+        self.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.on_deselect)
             
 
     def set_images(self):
@@ -100,17 +104,47 @@ class StorageRoots(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
         self.SetItemImage(idx, STATUS.get(data['status'], 0))
         self.SetItem(idx, 1, data['name'])
         self.SetItem(idx, 2, data['status'])
-        self.SetItemData(idx, data['idx'])
+        self.SetItemData(idx, data['id'])
 
+        self.root_items[data['id']] = {
+            'id': data['id'],
+            'name': data['name'],
+            'status': data['status'],
+            'path': data['path'],
+            'idx': idx
+        }
+        
         return idx
         
 
     def on_select(self, evt):
-        print(evt.Index)
+        self.selected = self.root_items[self.GetItemData(evt.Index)]
+        data = json.dumps({'dataset': self.selected})
+        script = f'app.storageRoots.selectRoot({data})'
+        self.main_win.webview.RunScriptAsync(script, clientData=None)
+        evt.Skip()
+
+
+    def on_deselect(self, evt):
+        self.deselect()
         evt.Skip()
         
 
     def deselect(self):
+        print('deselect')
+        self.selected = None
         for idx in range(0, self.GetItemCount(), 1):
             self.Select(idx, on=0)
             
+
+    def set_data(self, data):
+        print(data)
+        self.clear_items()
+        for item in data:
+            self.add_root(item)
+            
+
+    def clear_items(self):
+        self.DeleteAllItems()
+        self.root_items = {}
+        

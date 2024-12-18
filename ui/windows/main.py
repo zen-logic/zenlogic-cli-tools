@@ -11,6 +11,7 @@ from ..views.menu import Menu
 from ..views.roots import StorageRoots
 from ..views.messages import Messages
 from .about import AboutBox
+from .preferences import Preferences
 
 from core.server import FileHunter
 import core.util
@@ -50,6 +51,15 @@ class MainWindow(wx.Frame):
         self.timer = None
         self.queue = mp.Queue()
         self.drop_target = FileDrop(self)
+        self.prefs = None
+
+        self.roots = None
+        self.activity = None
+        self.webview = None
+        self.log = None
+        self.status_bar = None
+        self.menu = None
+        
         self.layout()
         self.setup_events()
         self.refresh_status()
@@ -58,12 +68,6 @@ class MainWindow(wx.Frame):
         self.start_server(None)
 
 
-    def show_about(self, evt):
-        dlg = AboutBox(self)
-        dlg.ShowModal()
-        dlg.Destroy()
-
-        
     def setup_events(self):
         self.Bind(wx.EVT_SIZE, self.on_resize)
         self.Bind(wx.EVT_ACTIVATE, self.on_activate)
@@ -87,11 +91,32 @@ class MainWindow(wx.Frame):
         # ignore "about:blank"
         if self.webview.CurrentURL.startswith('http'):
             print('web view loaded')
-            self.webview.RunScriptAsync('function foo () {return(42);} foo();', clientData=None)
+            # make sure the webview app knows it's running in
+            # the desktop client
+            script = 'document.body.classList.add("wxfh")'
+            self.webview.RunScriptAsync(script, clientData=None)
+            self.app.refresh()
 
 
     def on_webview_message(self, evt):
-        print(f'webview message received: {evt.GetString()}')
+        msg = json.loads(evt.GetString())
+        if 'type' in msg:
+            method_call = getattr(self.app, msg['type'], None)
+            if method_call:
+                method_call(msg)
+        return
+        try:
+            msg = json.loads(evt.GetString())
+            if 'type' in msg:
+                method_call = getattr(self.app, msg['type'], None)
+                if method_call:
+                    method_call(msg)
+                else:
+                    print('unknown message type', msg)
+            else:
+                print('invalid message', msg)
+        except:
+            print('invalid message', msg)
 
 
     def on_webview_script_result(self, evt):
@@ -212,7 +237,6 @@ class MainWindow(wx.Frame):
             self.activity.remove_item('pid')
             self.activity.remove_item('websocket')
             self.can_close = True
-
         
 
     def start_server(self, evt):
@@ -308,3 +332,15 @@ class MainWindow(wx.Frame):
         return None
 
 
+    def on_about(self, evt):
+        dlg = AboutBox(self)
+        dlg.ShowModal()
+        dlg.Destroy()
+
+
+        
+    def on_preferences(self, evt):
+        print('show preferences')
+        self.prefs = Preferences()
+        self.prefs.Show(self)
+        

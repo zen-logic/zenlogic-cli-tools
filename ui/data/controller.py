@@ -2,6 +2,18 @@
 
 class Controller(object):
 
-    def get_roots(self):
-        print('here')
-        
+
+    def refresh(self):
+        print('REFRESH')
+        # 1. update available storage roots
+        # 2. update files/folders managed
+
+    
+    def roots(self, data):
+        if 'data' in data:
+            self.win.roots.set_data(data['data'])
+    
+
+    def filecount(self, data):
+        if 'data' in data:
+            self.win.status_bar.set_data(data['data'])

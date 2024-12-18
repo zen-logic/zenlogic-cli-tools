@@ -1,4 +1,6 @@
 import * as zen from '../lib/zen.js';
+var wxfh = window.wxfh;
+
 
 export class Stats {
 
@@ -23,6 +25,12 @@ export class Stats {
 			parent: this.el,
 			content: content
 		});
+
+		if (wxfh) wxfh.postMessage({
+			type: 'filecount',
+			data: data
+		});
+
 	}
 
 	
