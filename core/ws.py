@@ -51,7 +51,6 @@ class MessageServer(object):
                 try:
                     message = await websocket.recv()
                     data = json.loads(message)
-                    # print(uid, data)
                     await self.process_message(uid, data)
                 except ConnectionClosed as e:
                     print(e)
@@ -87,10 +86,6 @@ class MessageServer(object):
         self.loop.add_signal_handler(signal.SIGTERM, self.cleanup, None)
         async with serve(self.handler, "", port):
             await self.stop
-
-        # async with serve(self.handler, "", port):
-        #     await asyncio.get_running_loop().create_future()
-        #     await self.cleanup()
             
 
 def run(port):

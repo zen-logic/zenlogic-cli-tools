@@ -3,12 +3,14 @@ import wx.lib.mixins.listctrl as listmix
 from ..util import *
 import os, json
 
+
 STATUS = {
     'online': 0,
     'busy': 1,
     'offline': 2,
     'unknown': 3
 }
+
 
 class StorageRoots(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
 
@@ -30,15 +32,6 @@ class StorageRoots(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
         self.create_buttons()
         self.setup_events()
 
-        # self.add_root({'name': 'foobar', 'status': 'online', 'idx': 0})
-        # self.add_root({'name': 'foobar 2 this has quite a long title', 'status': 'busy', 'idx': 0})
-        # self.add_root({'name': 'foobar 3', 'status': 'offline', 'idx': 0})
-        # self.add_root({'name': 'foobar 4', 'status': 'foobar', 'idx': 0})
-        # self.add_root({'name': 'foobar', 'status': 'online', 'idx': 0})
-        # self.add_root({'name': 'foobar 2 this has quite a long title', 'status': 'busy', 'idx': 0})
-        # self.add_root({'name': 'foobar 3', 'status': 'offline', 'idx': 0})
-        # self.add_root({'name': 'foobar 4', 'status': 'foobar', 'idx': 0})
-
 
     def create_buttons(self):
 
@@ -50,7 +43,6 @@ class StorageRoots(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
         self.btn_add = wx.Button(self.button_panel, 10, "Add")
         self.btn_add.Bind(wx.EVT_BUTTON, self.on_add)
         sizer.Add(self.btn_add, 1, flag = wx.EXPAND | wx.ALL, border=6)
-        # self.btn_add.Disable()
 
         self.btn_rescan = wx.Button(self.button_panel, 20, "Rescan")
         self.btn_rescan.Bind(wx.EVT_BUTTON, self.on_rescan)
@@ -60,16 +52,27 @@ class StorageRoots(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
 
     def on_add(self, evt):
         self.deselect()
-        dlg = wx.DirDialog(self, "Choose a directory:", style=wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST)
+        dlg = wx.DirDialog(self, "Choose a directory to scan", style=wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST)
         if dlg.ShowModal() == wx.ID_OK:
             print('You selected: %s' % dlg.GetPath())
         dlg.Destroy()
 
 
     def on_rescan(self, evt):
-        print('here')
-        print(evt)
-        pass
+        self.scan()
+
+
+    def scan(self):
+        if self.selected:
+            data = json.dumps({
+                'endpoint': 'actions/scan',
+                'params': {
+                    'description': f"Scan: {self.selected['name']}",
+                    'root': self.selected['id']
+                }
+            })
+            script = f'app.createProcess({data})'
+            self.main_win.webview.RunScriptAsync(script, clientData=None)
     
         
     def setup_events(self):

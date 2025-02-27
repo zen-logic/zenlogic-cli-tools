@@ -36,6 +36,7 @@ export class StorageRoots {
 		indicator.classList.add('busy');
 		indicator.innerHTML = 'busy';
 		this.rescan.classList.remove('enabled');
+
 		this.app.createProcess({
 			endpoint: 'actions/scan',
 			params: {

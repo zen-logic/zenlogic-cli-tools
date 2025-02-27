@@ -276,7 +276,8 @@ class MainWindow(wx.Frame):
                     print('FH: recieved', msg)
                     data = json.loads(msg)
                     if 'info' in data and 'detail' in data['info']:
-                        self.activity.set_item('activity', data['info']['detail'])
+                        self.log.write(data['info']['detail'])
+                        # self.activity.set_item('activity', data['info']['detail'])
         except Exception as e:
             print(e)
         finally:

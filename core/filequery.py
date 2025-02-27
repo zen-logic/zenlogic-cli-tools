@@ -10,7 +10,7 @@ class FileQuery(object):
 
     def get_roots(self):
         items = []
-        sql = "SELECT * FROM `roots`"
+        sql = "SELECT * FROM `roots` ORDER BY `name`"
         roots = self.db.get_records(sql, None)
         for root in roots:
             root = dict(root)
